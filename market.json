@@ -1,1 +1,25 @@
-{"updated": null}
+{
+ "updated": "2026-10-08T17:19:29+08:00",
+ "index": {
+  "value": 49313.44,
+  "change": -492.93,
+  "pct": -0.0099
+ },
+ "top": {
+  "code": "3653",
+  "name": "健策",
+  "price": 7165.0,
+  "pct": 0.0529
+ },
+ "bottom": {
+  "code": "6488",
+  "name": "環球晶",
+  "price": 1130.0,
+  "pct": -0.06996
+ },
+ "count": 35,
+ "turnover": {
+  "amount_e8": 8697.0
+ },
+ "time_label": "10/08 17:19"
+}
