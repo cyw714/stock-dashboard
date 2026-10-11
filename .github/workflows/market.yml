@@ -7,6 +7,8 @@ on:
     # 收盤後 13:40、14:30 各補抓一次最終數字
     - cron: "40 5 * * 1-5"
     - cron: "30 6 * * 1-5"
+    # 台灣時間週二到週六清晨 05:10，抓美股收盤價
+    - cron: "10 21 * * 1-5"
   workflow_dispatch: {}   # 也可以在 Actions 頁面手動按「Run workflow」
 
 permissions:
