@@ -1,12 +1,11 @@
-"""抓台股行情，寫進 market.json，給儀表板上方四格使用。
+"""抓行情，寫進 market.json，給儀表板使用。
 
-資料來源：
-  - 加權指數、個股即時價：證交所「基本市況報導」mis.twse.com.tw（上市 tse_、上櫃 otc_）
-  - 大盤成交金額：證交所 MI_5MINS（每 5 秒委託成交統計）
-  - 證交所連不上時，指數和個股改用 Yahoo Finance 備援
-追蹤清單：讀 data.xlsx 的「標的清單」（市場＝台股），名稱取「公司檔案」。
+  - 加權指數、台股個股即時價：證交所「基本市況報導」mis.twse.com.tw（上市 tse_、上櫃 otc_）
+  - 台指期近月：期交所「期貨行情」mis.taifex.com.tw
+  - 美股、日股，以及證交所連不上時的備援：Yahoo Finance
+追蹤清單：讀 data.xlsx 的「標的清單」，名稱取「公司檔案」。
 """
-import json, ssl, time, urllib.request, http.cookiejar
+import json, re, time, urllib.request, http.cookiejar
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import openpyxl
@@ -18,8 +17,15 @@ jar = http.cookiejar.CookieJar()
 opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
 
 
-def get_json(url, referer=None, timeout=15):
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json", **({"Referer": referer} if referer else {})})
+def http_json(url, referer=None, body=None, timeout=15):
+    headers = {"User-Agent": UA, "Accept": "application/json, text/plain, */*"}
+    if referer:
+        headers["Referer"] = referer
+    data = None
+    if body is not None:
+        data = json.dumps(body).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+    req = urllib.request.Request(url, data=data, headers=headers)
     with opener.open(req, timeout=timeout) as r:
         return json.loads(r.read().decode("utf-8"))
 
@@ -33,114 +39,118 @@ def num(v):
 
 
 def watchlist():
+    """回傳 [(代號, 市場)]，已去重、排除已出場。"""
     wb = openpyxl.load_workbook(ROOT / "data.xlsx", data_only=True, read_only=True)
-    names = {}
-    if "公司檔案" in wb.sheetnames:
-        rows = list(wb["公司檔案"].iter_rows(values_only=True))
-        h = list(rows[0])
-        for r in rows[1:]:
-            if r[h.index("代號")]:
-                names[str(r[h.index("代號")]).strip().upper()] = r[h.index("名稱")]
     rows = list(wb["標的清單"].iter_rows(values_only=True))
     h = list(rows[1])  # 第 2 列是欄位標題
-    codes = []
+    out, seen = [], set()
     for r in rows[2:]:
-        code, mkt = r[h.index("代號")], r[h.index("市場")]
+        code, mkt = r[h.index("代號")], r[h.index("市場")] or "台股"
         cat = r[h.index("分類")] if "分類" in h else None
-        if not code or cat == "已出場" or (mkt and mkt != "台股"):
+        if not code or cat == "已出場":
             continue
         c = str(code).strip()
         if c.endswith(".0"):
             c = c[:-2]
-        if c not in codes:
-            codes.append(c)
-    return codes, names
+        if c.upper() not in seen:
+            seen.add(c.upper())
+            out.append((c, mkt))
+    return out
 
 
 def from_mis(codes):
-    """回傳 ({'t00': (價, 昨收)}, {代號: (價, 昨收, 名稱)})"""
+    """證交所即時：回傳 (指數 (價, 昨收), {代號: (價, 昨收)})"""
     try:
         opener.open(urllib.request.Request("https://mis.twse.com.tw/stock/index.jsp", headers={"User-Agent": UA}), timeout=15).read()
     except Exception:
         pass
     chans = ["tse_t00.tw"] + [f"{ex}_{c}.tw" for c in codes for ex in ("tse", "otc")]
-    idx, stocks = {}, {}
+    idx, stocks = None, {}
     for i in range(0, len(chans), 40):
         url = ("https://mis.twse.com.tw/stock/api/getStockInfo.jsp?json=1&delay=0&_=%d&ex_ch=" % int(time.time() * 1000)) + "|".join(chans[i:i + 40])
-        data = get_json(url, referer="https://mis.twse.com.tw/stock/index.jsp")
+        data = http_json(url, referer="https://mis.twse.com.tw/stock/index.jsp")
         for m in data.get("msgArray", []):
             price = num(m.get("z"))
             if price is None:  # 剛好沒成交時，用最佳買價代替
                 price = num((m.get("b") or "").split("_")[0])
             prev = num(m.get("y"))
             if m.get("c") == "t00":
-                idx["t00"] = (price, prev)
+                idx = (price, prev)
             elif m.get("c") in codes:
-                stocks[m["c"]] = (price, prev, m.get("n"))
+                stocks[m["c"]] = (price, prev)
         time.sleep(1)
     return idx, stocks
 
 
 def yahoo(symbol):
-    d = get_json(f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?range=1d&interval=1d")
+    d = http_json(f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?range=1d&interval=1d")
     meta = d["chart"]["result"][0]["meta"]
     return num(meta.get("regularMarketPrice")), num(meta.get("chartPreviousClose") or meta.get("previousClose"))
 
 
-def turnover():
-    d = get_json("https://www.twse.com.tw/exchangeReport/MI_5MINS?response=json")
-    rows = d.get("data") or []
-    if not rows:
-        return None
-    last = rows[-1]
-    f = d.get("fields") or []
-    amt = num(last[f.index("累積成交金額")]) if "累積成交金額" in f else num(last[-1])  # 單位：百萬元
-    return {"amount_e8": round(amt / 100, 1), "time": last[0]} if amt else None
+def futures_txf():
+    """台指期近月：先抓一般交易時段，沒有價格再抓盤後時段。"""
+    for market_type in ("0", "1"):
+        body = {"MarketType": market_type, "SymbolType": "F", "KindID": "1", "CID": "TXF",
+                "ExpireMonth": "", "RowSize": "全部", "PageNo": "", "SortColumn": "", "AscDesc": "A"}
+        d = http_json("https://mis.taifex.com.tw/futures/api/getQuoteList", referer="https://mis.taifex.com.tw/futures/", body=body)
+        items = ((d.get("RtData") or {}).get("QuoteList")) or []
+        months = [q for q in items if re.match(r"^TXF[A-L]\d", str(q.get("SymbolID", "")))]
+        if not months:
+            continue
+        q = months[0]  # 清單依到期月排序，第一個就是近月
+        price, ref = num(q.get("CLastPrice")), num(q.get("CRefPrice"))
+        if price and ref:
+            return {"value": round(price, 0), "change": round(price - ref, 0), "pct": round(price / ref - 1, 5),
+                    "label": "夜盤" if market_type == "1" else ""}
+    return None
 
 
 def main():
-    codes, names = watchlist()
-    idx, stocks = {}, {}
+    wl = watchlist()
+    tw_codes = [c for c, m in wl if m == "台股"]
+    idx, tw = None, {}
     try:
-        idx, stocks = from_mis(codes)
+        idx, tw = from_mis(tw_codes)
     except Exception as e:
         print("證交所即時資料失敗，改用 Yahoo：", e)
-    if not idx.get("t00") or not idx["t00"][0]:
+    if not idx or not idx[0] or not idx[1]:
         try:
-            idx["t00"] = yahoo("%5ETWII")
+            idx = yahoo("%5ETWII")
         except Exception as e:
             print("指數備援失敗：", e)
-    for c in codes:
-        if c in stocks and stocks[c][0] and stocks[c][1]:
-            continue
-        for suffix in (".TW", ".TWO"):
+
+    quotes = {}
+    for code, mkt in wl:
+        price = prev = None
+        if mkt == "台股":
+            price, prev = tw.get(code, (None, None))
+            symbols = [] if (price and prev) else [code + ".TW", code + ".TWO"]
+        elif mkt == "日股":
+            symbols = [code + ".T"]
+        else:
+            symbols = [code]
+        for sym in symbols:
             try:
-                p, y = yahoo(c + suffix)
-                if p and y:
-                    stocks[c] = (p, y, None)
+                price, prev = yahoo(sym)
+                if price and prev:
                     break
             except Exception:
-                pass
-
-    out = {"updated": datetime.now(TW).isoformat(timespec="seconds")}
-    p, y = idx.get("t00", (None, None))
-    if p and y:
-        out["index"] = {"value": round(p, 2), "change": round(p - y, 2), "pct": round(p / y - 1, 5)}
-    movers = []
-    for c, (price, prev, n) in stocks.items():
+                price = prev = None
         if price and prev:
-            movers.append({"code": c, "name": names.get(c.upper()) or n or c, "price": price, "pct": round(price / prev - 1, 5)})
-    if movers:
-        movers.sort(key=lambda m: m["pct"])
-        out["top"], out["bottom"] = movers[-1], movers[0]
-        out["count"] = len(movers)
+            quotes[code.upper()] = {"price": round(price, 2), "prev": round(prev, 2), "pct": round(price / prev - 1, 5)}
+
+    out = {"updated": datetime.now(TW).isoformat(timespec="seconds"), "time_label": datetime.now(TW).strftime("%m/%d %H:%M")}
+    if idx and idx[0] and idx[1]:
+        p, y = idx
+        out["index"] = {"value": round(p, 2), "change": round(p - y, 2), "pct": round(p / y - 1, 5)}
     try:
-        t = turnover()
-        if t:
-            out["turnover"] = {"amount_e8": t["amount_e8"]}
+        f = futures_txf()
+        if f:
+            out["futures"] = f
     except Exception as e:
-        print("成交金額失敗：", e)
-    out["time_label"] = datetime.now(TW).strftime("%m/%d %H:%M")
+        print("台指期失敗：", e)
+    out["quotes"] = quotes
 
     path = ROOT / "market.json"
     old = {}
@@ -149,15 +159,18 @@ def main():
             old = json.loads(path.read_text(encoding="utf-8"))
         except Exception:
             pass
-    strip = lambda d: {k: v for k, v in d.items() if k not in ("updated", "time_label")}
-    if "index" not in out and old.get("index"):
+    if "index" not in out and not quotes and old.get("index"):
         print("這次沒抓到資料，保留上一次的行情")
         return
+    for k in ("index", "futures"):  # 這次沒抓到的項目沿用上一次
+        if k not in out and old.get(k):
+            out[k] = old[k]
+    strip = lambda d: {k: v for k, v in d.items() if k not in ("updated", "time_label")}
     if strip(out) == strip(old):
         print("行情沒有變動")
         return
     path.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
-    print(json.dumps(out, ensure_ascii=False))
+    print("指數", out.get("index"), "台指期", out.get("futures"), "個股", len(quotes), "檔")
 
 
 if __name__ == "__main__":
