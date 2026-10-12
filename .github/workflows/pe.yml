@@ -1,0 +1,31 @@
+name: 更新本益比
+
+on:
+  schedule:
+    # 台灣時間週一到週五 18:20（收盤資料公布後），GitHub 用 UTC
+    - cron: "20 10 * * 1-5"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install openpyxl
+      - run: cd scripts && python update_pe.py
+      - name: 有變動才存檔
+        run: |
+          if [ ! -f pe.json ]; then echo "沒有產生 pe.json"; exit 0; fi
+          git add pe.json
+          if git diff --cached --quiet; then echo "本益比沒有變動"; exit 0; fi
+          git config user.name "market-bot"
+          git config user.email "market-bot@users.noreply.github.com"
+          git commit -m "更新本益比 $(TZ=Asia/Taipei date '+%m/%d')"
+          git pull --rebase
+          git push
