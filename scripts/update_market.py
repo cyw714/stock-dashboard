@@ -38,23 +38,58 @@ def num(v):
         return None
 
 
+SHEET_ID = "1OdeqbHAtR8F-0Hu2zYFHeIck8Xzj7cXeEuRVWgL7M1A"  # 你的 Google 試算表
+FOREIGN = {"CRDO": ("CRDO", "美股"), "ALAB": ("ALAB", "美股"), "NBIS": ("NBIS", "美股"), "KIOXIA": ("285A", "日股"),
+           "瑞薩": ("6723", "日股"), "日東紡": ("3110", "日股"), "AAOI": ("AAOI", "美股"), "SANDISK": ("SNDK", "美股"),
+           "SNDK": ("SNDK", "美股"), "LITE": ("LITE", "美股")}
+
+
+def code_of(raw):
+    t = str(raw).strip()
+    if t.endswith(".0"):
+        t = t[:-2]
+    f = FOREIGN.get(t.upper()) or FOREIGN.get(t)
+    if f:
+        return f
+    if re.match(r"^\d{4,6}[A-Z]?$", t):
+        return t, "台股"
+    return t.upper(), "美股"
+
+
+def load_workbook():
+    """先讀 Google 試算表，讀不到再用 data.xlsx。"""
+    import io
+    try:
+        req = urllib.request.Request(f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=xlsx", headers={"User-Agent": UA})
+        with opener.open(req, timeout=30) as r:
+            return openpyxl.load_workbook(io.BytesIO(r.read()), data_only=True, read_only=True)
+    except Exception as e:
+        print("讀不到 Google 試算表，改用 data.xlsx：", e)
+        return openpyxl.load_workbook(ROOT / "data.xlsx", data_only=True, read_only=True)
+
+
 def watchlist():
-    """回傳 [(代號, 市場)]，已去重、排除已出場。"""
-    wb = openpyxl.load_workbook(ROOT / "data.xlsx", data_only=True, read_only=True)
-    rows = list(wb["標的清單"].iter_rows(values_only=True))
-    h = list(rows[1])  # 第 2 列是欄位標題
+    """回傳 [(代號, 市場)]，已去重。支援原始格式（國內／國外）和整理過的「標的清單」。"""
+    wb = load_workbook()
+    items = []
+    if "標的清單" in wb.sheetnames:
+        rows = list(wb["標的清單"].iter_rows(values_only=True))
+        h = list(rows[1])
+        for r in rows[2:]:
+            if r[h.index("代號")] and (r[h.index("分類")] if "分類" in h else None) != "已出場":
+                items.append((code_of(r[h.index("代號")])[0], r[h.index("市場")] or "台股"))
+    for name in ("國內", "國外"):
+        if name in wb.sheetnames:
+            for r in list(wb[name].iter_rows(values_only=True))[1:]:
+                a = r[0] if r else None
+                if a is None or str(a).strip() == "" or "今日" in str(a):
+                    continue
+                items.append(code_of(a))
     out, seen = [], set()
-    for r in rows[2:]:
-        code, mkt = r[h.index("代號")], r[h.index("市場")] or "台股"
-        cat = r[h.index("分類")] if "分類" in h else None
-        if not code or cat == "已出場":
-            continue
-        c = str(code).strip()
-        if c.endswith(".0"):
-            c = c[:-2]
+    for c, m in items:
         if c.upper() not in seen:
             seen.add(c.upper())
-            out.append((c, mkt))
+            out.append((c, m))
     return out
 
 
@@ -150,6 +185,16 @@ def main():
             out["futures"] = f
     except Exception as e:
         print("台指期失敗：", e)
+    def yq(sym, digits=2):
+        try:
+            p, y = yahoo(sym)
+            if p and y:
+                return {"value": round(p, digits), "change": round(p - y, digits), "pct": round(p / y - 1, 5)}
+        except Exception as e:
+            print(sym, "失敗：", e)
+        return None
+    out["nasdaq"] = {"index": yq("%5EIXIC"), "fut": yq("NQ%3DF", 0)}
+    out["sox"] = yq("%5ESOX")
     out["quotes"] = quotes
 
     path = ROOT / "market.json"
@@ -162,7 +207,7 @@ def main():
     if "index" not in out and not quotes and old.get("index"):
         print("這次沒抓到資料，保留上一次的行情")
         return
-    for k in ("index", "futures"):  # 這次沒抓到的項目沿用上一次
+    for k in ("index", "futures", "sox"):  # 這次沒抓到的項目沿用上一次
         if k not in out and old.get(k):
             out[k] = old[k]
     strip = lambda d: {k: v for k, v in d.items() if k not in ("updated", "time_label")}
