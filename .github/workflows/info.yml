@@ -1,0 +1,41 @@
+name: 更新公開資訊
+
+on:
+  schedule:
+    # 重大訊息：台灣時間週一到週五 08:00–21:30，每 30 分鐘（GitHub 用 UTC）
+    - cron: "*/30 0-13 * * 1-5"
+    # 月營收＋季報：每天台灣時間 18:50 全部更新一次
+    - cron: "50 10 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: info
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install openpyxl
+      - name: 抓資料
+        run: |
+          MODE=all
+          if [ "${{ github.event.schedule }}" = "*/30 0-13 * * 1-5" ]; then MODE=news; fi
+          cd scripts && python update_info.py $MODE
+      - name: 有變動才存檔
+        run: |
+          if [ ! -f info.json ]; then echo "沒有產生 info.json"; exit 0; fi
+          git add info.json
+          if git diff --cached --quiet; then echo "沒有變動"; exit 0; fi
+          git config user.name "market-bot"
+          git config user.email "market-bot@users.noreply.github.com"
+          git commit -m "更新公開資訊 $(TZ=Asia/Taipei date '+%m/%d %H:%M')"
+          git pull --rebase
+          git push
