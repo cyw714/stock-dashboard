@@ -67,6 +67,27 @@ button,input,select{font:inherit;color:inherit}
 .card{position:relative;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px 14px;cursor:pointer;display:flex;flex-direction:column;gap:10px;transition:transform .12s ease,box-shadow .12s ease,border-color .12s}
 .card:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
 .card.today{border-left:4px solid var(--hot);padding-left:13px}
+.card.st-buy{border-color:var(--down);box-shadow:0 0 0 1px var(--down) inset}
+.card.st-near{border-color:var(--down);border-style:dashed}
+.card.st-tp{border-color:var(--up);box-shadow:0 0 0 1px var(--up) inset}
+.card.today.st-buy,.card.today.st-near,.card.today.st-tp{border-left:4px solid var(--hot)}
+.st-chip{position:absolute;top:-10px;right:14px;font-size:11px;font-weight:700;padding:1px 9px;border-radius:999px;color:#fff;white-space:nowrap;line-height:18px}
+.st-chip.buy{background:var(--down)}
+.st-chip.near{background:var(--surface);color:var(--down);border:1px dashed var(--down)}
+.st-chip.tp{background:var(--up)}
+.c-tagrow{display:flex;align-items:flex-start;gap:8px}
+.c-tagrow .c-tag{flex:1;min-width:0}
+.pe-chip{flex:none;font-size:11px;font-family:var(--f-num);padding:1px 7px;border-radius:6px;background:var(--surface-2);color:var(--muted);white-space:nowrap;margin-top:1px}
+.pe-chip.lo{background:var(--down-soft);color:var(--down)}
+.pe-chip.hi{background:var(--up-soft);color:var(--up)}
+.val-range{position:relative;height:46px;margin-top:6px}
+.val-range .track{position:absolute;left:0;right:0;top:20px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--down-soft),var(--surface-2) 40%,var(--surface-2) 60%,var(--up-soft))}
+.val-range .med{position:absolute;top:16px;width:2px;height:14px;background:var(--muted);opacity:.6}
+.val-range .cur{position:absolute;top:15px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--now);border:2px solid var(--surface);box-shadow:0 0 0 1px var(--now)}
+.val-range .lb{position:absolute;top:32px;font-size:11px;font-family:var(--f-num);color:var(--muted)}
+.val-range .lb.r{right:0}.val-range .lb.m{transform:translateX(-50%)}
+.val-range .lb.top{top:0;color:var(--ink);font-weight:600;transform:translateX(-50%);white-space:nowrap}
+.val-note{font-size:13.5px;margin:8px 0 0;line-height:1.6}
 .c-head{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;min-width:0}
 .c-head .score{flex:none}
 .code{font-family:var(--f-num);font-weight:600;font-size:13px;color:var(--muted)}
@@ -213,418 +234,465 @@ button,input,select{font:inherit;color:inherit}
   <nav class="filters" aria-label="篩選">
     <div class="seg" id="segCat" role="group" aria-label="分類"><button type="button" aria-pressed="true" data-v="全部">全部</button><button type="button" aria-pressed="false" data-v="今日即時">今日即時</button><button type="button" aria-pressed="false" data-v="追蹤中">追蹤中</button></div>
     <div class="seg" id="segMkt" role="group" aria-label="市場"><button type="button" aria-pressed="true" data-v="全部">全部</button><button type="button" aria-pressed="false" data-v="台股">台股</button><button type="button" aria-pressed="false" data-v="美股">美股</button><button type="button" aria-pressed="false" data-v="日股">日股</button></div>
+    <div class="seg" id="segSt" role="group" aria-label="買點狀態"></div>
     <input class="search" id="q" type="search" placeholder="搜尋代號、名稱、題材…">
     <select class="sort" id="sort" aria-label="排序">
       <option value="order">原表順序</option>
       <option value="score">平均分 高→低</option>
       <option value="gain">TP1 漲幅 高→低</option>
+      <option value="dist">距買點 近→遠</option>
       <option value="code">代號</option>
     </select>
     <span class="count" id="count">顯示 45 檔</span>
   </nav>
 
   <main class="grid" id="grid"><button class="card today" data-code="6147" type="button">
+      
       <div class="c-head"><span class="code">6147</span><span class="pill">台股</span>
         <span class="pill hot">今日即時</span><span class="pill dup" title="Excel 裡有 2 組價位">2 組</span>
         <span class="score hi" title="平均分">9.4</span></div>
       <div class="c-row"><div class="c-name">頎邦</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">驅動 IC 金凸塊與 COF 封測龍頭</div>
+      <div class="c-tagrow"><div class="c-tag">驅動 IC 金凸塊與 COF 封測龍頭</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(12.64% - 6.90% + 4px)"></div><div class="tgt t1" style="left:37.72%"></div><div class="tgt t2" style="left:56.53%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:37.72%;transform:translateX(-50%)">T1 274</span><span class="lbl t r0" style="left:56.53%;transform:translateX(-50%)">T2 310</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 380</span><span class="lbl b r0" style="left:9.77%;transform:translateX(-2px)">買 215–226</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">215</b></span>
         <span class="gain"><small>買點1→TP1</small>+21%</span></div>
     </button><button class="card today" data-code="3037" type="button">
+      
       <div class="c-head"><span class="code">3037</span><span class="pill">台股</span>
         <span class="pill hot">今日即時</span>
         <span class="score hi" title="平均分">9.3</span></div>
       <div class="c-row"><div class="c-name">欣興</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">ABF 載板與高階 PCB 龍頭</div>
+      <div class="c-tagrow"><div class="c-tag">ABF 載板與高階 PCB 龍頭</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(23.18% - 6.90% + 4px)"></div><div class="tgt t1" style="left:66.28%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:66.28%;transform:translateX(-50%)">T1 1,670</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 1,950</span><span class="lbl b r0" style="left: 0px; transform: none;">買 1,050–1,220</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">1,050</b></span>
         <span class="gain"><small>買點1→TP1</small>+37%</span></div>
     </button><button class="card today" data-code="2344" type="button">
+      
       <div class="c-head"><span class="code">2344</span><span class="pill">台股</span>
         <span class="pill hot">今日即時</span>
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">華邦電</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">利基型 DRAM 與 NOR／NAND Flash</div>
+      <div class="c-tagrow"><div class="c-tag">利基型 DRAM 與 NOR／NAND Flash</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(19.21% - 6.90% + 4px)"></div><div class="tgt t1" style="left:50.00%"></div><div class="tgt t2" style="left:79.56%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:50.00%;transform:translateX(-50%)">T1 230</span><span class="lbl t r0" style="left:79.56%;transform:translateX(-50%)">T2 278</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 300</span><span class="lbl b r0" style="left:13.05%;transform:translateX(-50%)">買 160–180</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">160</b></span>
         <span class="gain"><small>買點1→TP1</small>+28%</span></div>
     </button><button class="card today" data-code="3081" type="button">
+      
       <div class="c-head"><span class="code">3081</span><span class="pill">台股</span>
         <span class="pill hot">今日即時</span><span class="pill dup" title="Excel 裡有 2 組價位">2 組</span>
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">聯亞</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">InP 雷射與檢光磊晶片</div>
+      <div class="c-tagrow"><div class="c-tag">InP 雷射與檢光磊晶片</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(17.67% - 6.90% + 4px)"></div><div class="tgt t1" style="left:37.43%"></div><div class="tgt t2" style="left:64.37%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:37.43%;transform:translateX(-50%)">T1 3,550</span><span class="lbl t r0" style="left:64.37%;transform:translateX(-50%)">T2 4,300</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 5,100</span><span class="lbl b r0" style="left: 0px; transform: none;">買 2,700–3,000</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">2,700</b></span>
         <span class="gain"><small>買點1→TP1</small>+18%</span></div>
     </button><button class="card today" data-code="2327" type="button">
+      
       <div class="c-head"><span class="code">2327</span><span class="pill">台股</span>
         <span class="pill hot">今日即時</span>
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">國巨</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">全球被動元件龍頭</div>
+      <div class="c-tagrow"><div class="c-tag">全球被動元件龍頭</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(13.24% - 6.90% + 4px)"></div><div class="tgt t1" style="left:41.43%"></div><div class="tgt t2" style="left:71.96%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:41.43%;transform:translateX(-50%)">T1 730</span><span class="lbl t r0" style="left:71.96%;transform:translateX(-50%)">T2 860</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 950</span><span class="lbl b r0" style="left: 0px; transform: none;">買 583–610</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">583</b></span>
         <span class="gain"><small>買點1→TP1</small>+20%</span></div>
     </button><button class="card today" data-code="3529" type="button">
+      
       <div class="c-head"><span class="code">3529</span><span class="pill">台股</span>
         <span class="pill hot">今日即時</span><span class="pill dup" title="Excel 裡有 2 組價位">2 組</span>
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">力旺</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">嵌入式非揮發記憶體 IP</div>
+      <div class="c-tagrow"><div class="c-tag">嵌入式非揮發記憶體 IP</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(18.85% - 6.90% + 4px)"></div><div class="tgt t1" style="left:49.17%"></div><div class="tgt t2" style="left:71.41%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:49.17%;transform:translateX(-50%)">T1 3,410</span><span class="lbl t r0" style="left:71.41%;transform:translateX(-50%)">T2 3,810</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 4,200</span><span class="lbl b r0" style="left: 0px; transform: none;">買 2,650–2,865</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">2,650</b></span>
         <span class="gain"><small>買點1→TP1</small>+19%</span></div>
     </button><button class="card today" data-code="3234" type="button">
+      
       <div class="c-head"><span class="code">3234</span><span class="pill">台股</span>
         <span class="pill hot">今日即時</span>
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">光環</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">VCSEL 與光通訊雷射、檢光元件</div>
+      <div class="c-tagrow"><div class="c-tag">VCSEL 與光通訊雷射、檢光元件</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(23.39% - 6.90% + 4px)"></div><div class="tgt t1" style="left:48.13%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:48.13%;transform:translateX(-50%)">T1 220</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 280</span><span class="lbl b r0" style="left:15.14%;transform:translateX(-50%)">買 165–187</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">165</b></span>
         <span class="gain"><small>買點1→TP1</small>+18%</span></div>
     </button><button class="card" data-code="3653" type="button">
+      
       <div class="c-head"><span class="code">3653</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">健策</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">均熱片與液冷散熱模組</div>
+      <div class="c-tagrow"><div class="c-tag">均熱片與液冷散熱模組</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(20.16% - 6.90% + 4px)"></div><div class="tgt t1" style="left:55.53%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:55.53%;transform:translateX(-50%)">T1 8,300</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 10,000</span><span class="lbl b r0" style="left: 0px; transform: none;">買 6,100–6,700</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">6,100</b></span>
         <span class="gain"><small>買點1→TP1</small>+24%</span></div>
     </button><button class="card" data-code="3595" type="button">
+      
       <div class="c-head"><span class="code">3595</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">山太士</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">面板與先進封裝製程保護膜</div>
+      <div class="c-tagrow"><div class="c-tag">面板與先進封裝製程保護膜</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(14.64% - 6.90% + 4px)"></div><div class="tgt t1" style="left:40.32%"></div><div class="tgt t2" style="left:68.47%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:40.32%;transform:translateX(-50%)">T1 2,200</span><span class="lbl t r0" style="left:68.47%;transform:translateX(-50%)">T2 3,000</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 3,700</span><span class="lbl b r0" style="left: 0px; transform: none;">買 1,250–1,470</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">1,250</b></span>
         <span class="gain"><small>買點1→TP1</small>+50%</span></div>
     </button><button class="card" data-code="3533" type="button">
+      
       <div class="c-head"><span class="code">3533</span><span class="pill">台股</span>
         <span class="pill dup" title="Excel 裡有 2 組價位">2 組</span>
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">嘉澤</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">CPU／GPU Socket 連接器</div>
+      <div class="c-tagrow"><div class="c-tag">CPU／GPU Socket 連接器</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(14.88% - 6.90% + 4px)"></div><div class="tgt t1" style="left:38.83%"></div><div class="tgt t2" style="left:57.98%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:38.83%;transform:translateX(-50%)">T1 2,600</span><span class="lbl t r1" style="left:57.98%;transform:translateX(-50%)">T2 3,200</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 4,300</span><span class="lbl b r0" style="left: 0px; transform: none;">買 1,600–1,850</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">1,600</b></span>
         <span class="gain"><small>買點1→TP1</small>+41%</span></div>
     </button><button class="card" data-code="6531" type="button">
+      
       <div class="c-head"><span class="code">6531</span><span class="pill">台股</span>
         
         <span class="score mid" title="平均分">8.7</span></div>
       <div class="c-row"><div class="c-name">愛普</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">PSRAM 與矽電容，打進先進封裝</div>
+      <div class="c-tagrow"><div class="c-tag">PSRAM 與矽電容，打進先進封裝</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(11.73% - 6.90% + 4px)"></div><div class="tgt t1" style="left:40.73%"></div><div class="tgt t2" style="left:68.93%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:40.73%;transform:translateX(-50%)">T1 1,300</span><span class="lbl t r0" style="left:68.93%;transform:translateX(-50%)">T2 1,650</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 1,950</span><span class="lbl b r0" style="left:9.31%;transform:translateX(-2px)">買 880–940</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">880</b></span>
         <span class="gain"><small>買點1→TP1</small>+38%</span></div>
     </button><button class="card" data-code="3665" type="button">
+      
       <div class="c-head"><span class="code">3665</span><span class="pill">台股</span>
         
         <span class="score mid" title="平均分">8.6</span></div>
       <div class="c-row"><div class="c-name">貿聯-KY</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">高速線束與伺服器連接線組</div>
+      <div class="c-tagrow"><div class="c-tag">高速線束與伺服器連接線組</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(12.84% - 6.90% + 4px)"></div><div class="tgt t1" style="left:51.49%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:51.49%;transform:translateX(-50%)">T1 2,900</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 3,600</span><span class="lbl b r0" style="left:9.87%;transform:translateX(-2px)">買 2,150–2,250</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">2,150</b></span>
         <span class="gain"><small>買點1→TP1</small>+29%</span></div>
     </button><button class="card" data-code="6907" type="button">
+      
       <div class="c-head"><span class="code">6907</span><span class="pill">台股</span>
         
         <span class="score hi" title="平均分">9.1</span></div>
       <div class="c-row"><div class="c-name">雅特力-KY</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">ARM 架構 MCU 設計</div>
+      <div class="c-tagrow"><div class="c-tag">ARM 架構 MCU 設計</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(11.36% - 6.90% + 4px)"></div><div class="tgt t1" style="left:48.51%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:48.51%;transform:translateX(-50%)">T1 280</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 400</span><span class="lbl b r0" style="left:9.13%;transform:translateX(-2px)">買 168–180</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">168</b></span>
         <span class="gain"><small>買點1→TP1</small>+56%</span></div>
     </button><button class="card" data-code="7769" type="button">
+      
       <div class="c-head"><span class="code">7769</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">鴻勁</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">IC 測試分選機與溫控方案</div>
+      <div class="c-tagrow"><div class="c-tag">IC 測試分選機與溫控方案</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(18.79% - 6.90% + 4px)"></div><div class="tgt t1" style="left:52.48%"></div><div class="tgt t2" style="left:75.27%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:52.48%;transform:translateX(-50%)">T1 8,000</span><span class="lbl t r0" style="left:75.27%;transform:translateX(-50%)">T2 9,150</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 10,050</span><span class="lbl b r0" style="left: 0px; transform: none;">買 5,700–6,300</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">5,700</b></span>
         <span class="gain"><small>買點1→TP1</small>+27%</span></div>
     </button><button class="card" data-code="6190" type="button">
+      
       <div class="c-head"><span class="code">6190</span><span class="pill">台股</span>
         
         <span class="score mid" title="平均分">8.7</span></div>
       <div class="c-row"><div class="c-name">萬泰科</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">網路線、電源線與電子線材</div>
+      <div class="c-tagrow"><div class="c-tag">網路線、電源線與電子線材</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(18.39% - 6.90% + 4px)"></div><div class="tgt t1" style="left:49.04%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:49.04%;transform:translateX(-50%)">T1 86</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 109</span><span class="lbl b r0" style="left:12.64%;transform:translateX(-50%)">買 64–70</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">64</b></span>
         <span class="gain"><small>買點1→TP1</small>+23%</span></div>
     </button><button class="card" data-code="2337" type="button">
+      
       <div class="c-head"><span class="code">2337</span><span class="pill">台股</span>
         <span class="pill dup" title="Excel 裡有 2 組價位">2 組</span>
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">旺宏</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">NOR Flash 與 ROM 大廠</div>
+      <div class="c-tagrow"><div class="c-tag">NOR Flash 與 ROM 大廠</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(24.28% - 6.90% + 4px)"></div><div class="tgt t1" style="left:49.64%"></div><div class="tgt t2" style="left:71.37%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:49.64%;transform:translateX(-50%)">T1 160</span><span class="lbl t r0" style="left:71.37%;transform:translateX(-50%)">T2 190</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 220</span><span class="lbl b r0" style="left:15.59%;transform:translateX(-50%)">買 101–125</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">101</b></span>
         <span class="gain"><small>買點1→TP1</small>+28%</span></div>
     </button><button class="card" data-code="6139" type="button">
+      
       <div class="c-head"><span class="code">6139</span><span class="pill">台股</span>
         
         <span class="score mid" title="平均分">8.8</span></div>
       <div class="c-row"><div class="c-name">亞翔</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">無塵室機電整合工程</div>
+      <div class="c-tagrow"><div class="c-tag">無塵室機電整合工程</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(11.82% - 6.90% + 4px)"></div><div class="tgt t1" style="left:63.55%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:63.55%;transform:translateX(-50%)">T1 980</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 1,100</span><span class="lbl b r0" style="left:9.36%;transform:translateX(-2px)">買 750–770</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">750</b></span>
         <span class="gain"><small>買點1→TP1</small>+27%</span></div>
     </button><button class="card" data-code="3376" type="button">
+      
       <div class="c-head"><span class="code">3376</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">新日興</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">筆電與手機樞紐（轉軸）</div>
+      <div class="c-tagrow"><div class="c-tag">筆電與手機樞紐（轉軸）</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(12.10% - 6.90% + 4px)"></div><div class="tgt t1" style="left:35.25%"></div><div class="tgt t2" style="left:52.60%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:35.25%;transform:translateX(-50%)">T1 250</span><span class="lbl t r0" style="left:52.60%;transform:translateX(-50%)">T2 280</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 350</span><span class="lbl b r0" style="left:9.50%;transform:translateX(-2px)">買 201–210</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">201</b></span>
         <span class="gain"><small>買點1→TP1</small>+19%</span></div>
     </button><button class="card" data-code="CRDO" type="button">
+      
       <div class="c-head"><span class="code">CRDO</span><span class="pill">美股</span>
         <span class="pill dup" title="Excel 裡有 2 組價位">2 組</span>
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">Credo</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">AEC 主動式電纜與 SerDes</div>
+      <div class="c-tagrow"><div class="c-tag">AEC 主動式電纜與 SerDes</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(17.16% - 6.90% + 4px)"></div><div class="tgt t1" style="left:39.74%"></div><div class="tgt t2" style="left:72.58%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:39.74%;transform:translateX(-50%)">T1 280</span><span class="lbl t r0" style="left:72.58%;transform:translateX(-50%)">T2 360</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 410</span><span class="lbl b r0" style="left:12.03%;transform:translateX(-50%)">買 200–225</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">200</b></span>
         <span class="gain"><small>買點1→TP1</small>+24%</span></div>
     </button><button class="card" data-code="7610" type="button">
+      
       <div class="c-head"><span class="code">7610</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">聯友金屬-創</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">鎢、鈷化學品（創新板）</div>
+      <div class="c-tagrow"><div class="c-tag">鎢、鈷化學品（創新板）</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(28.45% - 6.90% + 4px)"></div><div class="tgt t1" style="left:55.39%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:55.39%;transform:translateX(-50%)">T1 2,400</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 3,100</span><span class="lbl b r0" style="left:17.67%;transform:translateX(-50%)">買 1,500–1,900</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">1,500</b></span>
         <span class="gain"><small>買點1→TP1</small>+26%</span></div>
     </button><button class="card" data-code="6725" type="button">
+      
       <div class="c-head"><span class="code">6725</span><span class="pill">台股</span>
         
         <span class="score mid" title="平均分">8.8</span></div>
       <div class="c-row"><div class="c-name">矽科宏晟</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">高科技廠製程廠務系統整合</div>
+      <div class="c-tagrow"><div class="c-tag">高科技廠製程廠務系統整合</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(10.42% - 6.90% + 4px)"></div><div class="tgt t1" style="left:38.61%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:38.61%;transform:translateX(-50%)">T1 420</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 652</span><span class="lbl b r0" style="left:8.66%;transform:translateX(-2px)">買 285–300</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">285</b></span>
         <span class="gain"><small>買點1→TP1</small>+40%</span></div>
     </button><button class="card" data-code="2441" type="button">
+      
       <div class="c-head"><span class="code">2441</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">7.2</span></div>
       <div class="c-row"><div class="c-name">超豐</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">傳統 IC 封裝測試</div>
+      <div class="c-tagrow"><div class="c-tag">傳統 IC 封裝測試</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(19.41% - 6.90% + 4px)"></div><div class="tgt t1" style="left:68.08%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:68.08%;transform:translateX(-50%)">T1 155</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 173</span><span class="lbl b r0" style="left:13.15%;transform:translateX(-50%)">買 111–120</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">111</b></span>
         <span class="gain"><small>買點1→TP1</small>+29%</span></div>
     </button><button class="card" data-code="4966" type="button">
+      
       <div class="c-head"><span class="code">4966</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">8.0</span></div>
       <div class="c-row"><div class="c-name">譜瑞-KY</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">高速傳輸介面與顯示晶片</div>
+      <div class="c-tagrow"><div class="c-tag">高速傳輸介面與顯示晶片</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(6.90% - 6.90% + 4px)"></div><div class="tgt t1" style="left:41.87%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:41.87%;transform:translateX(-50%)">T1 702</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 910</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">買 560</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">560</b></span>
         <span class="gain"></span></div>
     </button><button class="card" data-code="4971" type="button">
+      
       <div class="c-head"><span class="code">4971</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">IET-KY</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">GaAs／InP 磊晶片</div>
+      <div class="c-tagrow"><div class="c-tag">GaAs／InP 磊晶片</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(13.05% - 6.90% + 4px)"></div><div class="tgt t1" style="left:54.11%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:54.11%;transform:translateX(-50%)">T1 620</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 810</span><span class="lbl b r0" style="left:9.98%;transform:translateX(-2px)">買 390–420</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">390</b></span>
         <span class="gain"><small>買點1→TP1</small>+48%</span></div>
     </button><button class="card" data-code="5347" type="button">
+      
       <div class="c-head"><span class="code">5347</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">8.0</span></div>
       <div class="c-row"><div class="c-name">世界</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">特殊製程晶圓代工</div>
+      <div class="c-tagrow"><div class="c-tag">特殊製程晶圓代工</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(8.55% - 6.90% + 4px)"></div><div class="tgt t1" style="left:30.11%"></div><div class="tgt t2" style="left:59.95%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:30.11%;transform:translateX(-50%)">T1 260</span><span class="lbl t r0" style="left:59.95%;transform:translateX(-50%)">T2 350</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 450</span><span class="lbl b r0" style="left:7.73%;transform:translateX(-2px)">買 190–195</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">190</b></span>
         <span class="gain"><small>買點1→TP1</small>+33%</span></div>
     </button><button class="card" data-code="6805" type="button">
+      
       <div class="c-head"><span class="code">6805</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">富世達</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">樞紐與液冷快接頭</div>
+      <div class="c-tagrow"><div class="c-tag">樞紐與液冷快接頭</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(22.19% - 6.90% + 4px)"></div><div class="tgt t1" style="left:65.29%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:65.29%;transform:translateX(-50%)">T1 2,100</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 2,400</span><span class="lbl b r0" style="left: 0px; transform: none;">買 1,470–1,635</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">1,470</b></span>
         <span class="gain"><small>買點1→TP1</small>+28%</span></div>
     </button><button class="card" data-code="8299" type="button">
+      
       <div class="c-head"><span class="code">8299</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">群聯</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">NAND 控制晶片與儲存方案</div>
+      <div class="c-tagrow"><div class="c-tag">NAND 控制晶片與儲存方案</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(21.89% - 6.90% + 4px)"></div><div class="tgt t1" style="left:55.62%"></div><div class="tgt t2" style="left:74.36%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:55.62%;transform:translateX(-50%)">T1 3,400</span><span class="lbl t r1" style="left:74.36%;transform:translateX(-50%)">T2 3,900</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 4,400</span><span class="lbl b r0" style="left: 0px; transform: none;">買 2,100–2,500</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">2,100</b></span>
         <span class="gain"><small>買點1→TP1</small>+36%</span></div>
     </button><button class="card" data-code="4989" type="button">
+      
       <div class="c-head"><span class="code">4989</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">榮科</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">電解銅箔</div>
+      <div class="c-tagrow"><div class="c-tag">電解銅箔</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(16.10% - 6.90% + 4px)"></div><div class="tgt t1" style="left:51.26%"></div><div class="tgt t2" style="left:71.34%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:51.26%;transform:translateX(-50%)">T1 130</span><span class="lbl t r0" style="left:71.34%;transform:translateX(-50%)">T2 154</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 180</span><span class="lbl b r0" style="left:11.50%;transform:translateX(-50%)">買 77–88</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">77</b></span>
         <span class="gain"><small>買點1→TP1</small>+48%</span></div>
     </button><button class="card" data-code="2329" type="button">
+      
       <div class="c-head"><span class="code">2329</span><span class="pill">台股</span>
         <span class="pill dup" title="Excel 裡有 2 組價位">2 組</span>
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">華泰</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">記憶體封測與 EMS</div>
+      <div class="c-tagrow"><div class="c-tag">記憶體封測與 EMS</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(14.08% - 6.90% + 4px)"></div><div class="tgt t1" style="left:37.43%"></div><div class="tgt t2" style="left:66.16%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:37.43%;transform:translateX(-50%)">T1 88</span><span class="lbl t r0" style="left:66.16%;transform:translateX(-50%)">T2 120</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 150</span><span class="lbl b r0" style="left:10.49%;transform:translateX(-50%)">買 54–62</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">54</b></span>
         <span class="gain"><small>買點1→TP1</small>+42%</span></div>
     </button><button class="card" data-code="3026" type="button">
+      
       <div class="c-head"><span class="code">3026</span><span class="pill">台股</span>
         <span class="pill dup" title="Excel 裡有 2 組價位">2 組</span>
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">禾伸堂</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">MLCC 與被動元件</div>
+      <div class="c-tagrow"><div class="c-tag">MLCC 與被動元件</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(19.21% - 6.90% + 4px)"></div><div class="tgt t1" style="left:50.00%"></div><div class="tgt t2" style="left:74.63%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:50.00%;transform:translateX(-50%)">T1 1,150</span><span class="lbl t r0" style="left:74.63%;transform:translateX(-50%)">T2 1,350</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 1,500</span><span class="lbl b r0" style="left:13.05%;transform:translateX(-50%)">買 800–900</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">800</b></span>
         <span class="gain"><small>買點1→TP1</small>+28%</span></div>
     </button><button class="card" data-code="6173" type="button">
+      
       <div class="c-head"><span class="code">6173</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">7.4</span></div>
       <div class="c-row"><div class="c-name">信昌電</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">晶片電容、電阻與介電瓷粉</div>
+      <div class="c-tagrow"><div class="c-tag">晶片電容、電阻與介電瓷粉</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(24.68% - 6.90% + 4px)"></div><div class="tgt t1" style="left:50.00%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:50.00%;transform:translateX(-50%)">T1 280</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 360</span><span class="lbl b r0" style="left:15.79%;transform:translateX(-50%)">買 200–233</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">200</b></span>
         <span class="gain"><small>買點1→TP1</small>+20%</span></div>
     </button><button class="card" data-code="6770" type="button">
+      
       <div class="c-head"><span class="code">6770</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">力積電</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">記憶體與邏輯晶圓代工</div>
+      <div class="c-tagrow"><div class="c-tag">記憶體與邏輯晶圓代工</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(6.90% - 6.90% + 4px)"></div><div class="tgt t1" style="left:32.20%"></div><div class="tgt t2" style="left:55.62%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:32.20%;transform:translateX(-50%)">T1 105</span><span class="lbl t r0" style="left:55.62%;transform:translateX(-50%)">T2 130</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 170</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">買 78</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">78</b></span>
         <span class="gain"></span></div>
     </button><button class="card" data-code="6488" type="button">
+      
       <div class="c-head"><span class="code">6488</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">環球晶</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">全球前三大矽晶圓廠</div>
+      <div class="c-tagrow"><div class="c-tag">全球前三大矽晶圓廠</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(13.63% - 6.90% + 4px)"></div><div class="tgt t1" style="left:37.88%"></div><div class="tgt t2" style="left:67.51%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:37.88%;transform:translateX(-50%)">T1 980</span><span class="lbl t r0" style="left:67.51%;transform:translateX(-50%)">T2 1,200</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 1,390</span><span class="lbl b r0" style="left: 0px; transform: none;">買 750–800</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">750</b></span>
         <span class="gain"><small>買點1→TP1</small>+23%</span></div>
     </button><button class="card" data-code="7734" type="button">
+      
       <div class="c-head"><span class="code">7734</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">印能</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">先進封裝除泡與熱製程設備</div>
+      <div class="c-tagrow"><div class="c-tag">先進封裝除泡與熱製程設備</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(6.90% - 6.90% + 4px)"></div><div class="tgt t1" style="left:46.92%"></div><div class="tgt t2" style="left:71.55%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:46.92%;transform:translateX(-50%)">T1 4,600</span><span class="lbl t r0" style="left:71.55%;transform:translateX(-50%)">T2 5,400</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 6,100</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">買 3,300</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">3,300</b></span>
         <span class="gain"></span></div>
     </button><button class="card" data-code="3661" type="button">
+      
       <div class="c-head"><span class="code">3661</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">世芯-KY</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">雲端 AI ASIC 設計服務</div>
+      <div class="c-tagrow"><div class="c-tag">雲端 AI ASIC 設計服務</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(11.89% - 6.90% + 4px)"></div><div class="tgt t1" style="left:30.63%"></div><div class="tgt t2" style="left:54.37%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:30.63%;transform:translateX(-50%)">T1 6,500</span><span class="lbl t r0" style="left:54.37%;transform:translateX(-50%)">T2 8,400</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 11,500</span><span class="lbl b r0" style="left:9.40%;transform:translateX(-2px)">買 4,600–5,000</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">4,600</b></span>
         <span class="gain"><small>買點1→TP1</small>+30%</span></div>
     </button><button class="card" data-code="6723" type="button">
+      
       <div class="c-head"><span class="code">6723</span><span class="pill">日股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">瑞薩</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">車用與工控 MCU 大廠</div>
+      <div class="c-tagrow"><div class="c-tag">車用與工控 MCU 大廠</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(22.57% - 6.90% + 4px)"></div><div class="tgt t1" style="left:65.67%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:65.67%;transform:translateX(-50%)">T1 5,100</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 5,800</span><span class="lbl b r0" style="left: 0px; transform: none;">買 3,600–4,000</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">3,600</b></span>
         <span class="gain"><small>買點1→TP1</small>+27%</span></div>
     </button><button class="card" data-code="7751" type="button">
+      
       <div class="c-head"><span class="code">7751</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">竑騰</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">先進封裝自動化設備</div>
+      <div class="c-tagrow"><div class="c-tag">先進封裝自動化設備</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(11.69% - 6.90% + 4px)"></div><div class="tgt t1" style="left:26.05%"></div><div class="tgt t2" style="left:47.61%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:26.05%;transform:translateX(-50%)">T1 2,000</span><span class="lbl t r0" style="left:47.61%;transform:translateX(-50%)">T2 2,450</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 3,400</span><span class="lbl b r0" style="left:9.29%;transform:translateX(-2px)">買 1,600–1,700</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">1,600</b></span>
         <span class="gain"><small>買點1→TP1</small>+18%</span></div>
     </button><button class="card" data-code="2408" type="button">
+      
       <div class="c-head"><span class="code">2408</span><span class="pill">台股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">南亞科</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">標準型 DRAM 製造</div>
+      <div class="c-tagrow"><div class="c-tag">標準型 DRAM 製造</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(18.65% - 6.90% + 4px)"></div><div class="tgt t1" style="left:40.20%"></div><div class="tgt t2" style="left:61.76%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:40.20%;transform:translateX(-50%)">T1 325</span><span class="lbl t r0" style="left:61.76%;transform:translateX(-50%)">T2 380</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 460</span><span class="lbl b r0" style="left:12.77%;transform:translateX(-50%)">買 240–270</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">240</b></span>
         <span class="gain"><small>買點1→TP1</small>+20%</span></div>
     </button><button class="card" data-code="ALAB" type="button">
+      
       <div class="c-head"><span class="code">ALAB</span><span class="pill">美股</span>
         <span class="pill dup" title="Excel 裡有 2 組價位">2 組</span>
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">Astera Labs</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">PCIe／CXL Retimer 與交換晶片</div>
+      <div class="c-tagrow"><div class="c-tag">PCIe／CXL Retimer 與交換晶片</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(10.44% - 6.90% + 4px)"></div><div class="tgt t1" style="left:57.68%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:57.68%;transform:translateX(-50%)">T1 270</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 330</span><span class="lbl b r0" style="left:8.67%;transform:translateX(-2px)">買 184–190</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">184</b></span>
         <span class="gain"><small>買點1→TP1</small>+42%</span></div>
     </button><button class="card" data-code="NBIS" type="button">
+      
       <div class="c-head"><span class="code">NBIS</span><span class="pill">美股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">Nebius</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">GPU 雲端服務</div>
+      <div class="c-tagrow"><div class="c-tag">GPU 雲端服務</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(14.73% - 6.90% + 4px)"></div><div class="tgt t1" style="left:42.72%"></div><div class="tgt t2" style="left:70.71%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:42.72%;transform:translateX(-50%)">T1 190</span><span class="lbl t r0" style="left:70.71%;transform:translateX(-50%)">T2 240</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 280</span><span class="lbl b r0" style="left: 0px; transform: none;">買 126–140</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">126</b></span>
         <span class="gain"><small>買點1→TP1</small>+36%</span></div>
     </button><button class="card" data-code="285A" type="button">
+      
       <div class="c-head"><span class="code">285A</span><span class="pill">日股</span>
         <span class="pill dup" title="Excel 裡有 2 組價位">2 組</span>
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">Kioxia</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">NAND Flash 大廠</div>
+      <div class="c-tagrow"><div class="c-tag">NAND Flash 大廠</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(16.75% - 6.90% + 4px)"></div><div class="tgt t1" style="left:61.08%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:61.08%;transform:translateX(-50%)">T1 30,500</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 37,000</span><span class="lbl b r0" style="left: 0px; transform: none;">買 19,500–21,500</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">19,500</b></span>
         <span class="gain"><small>買點1→TP1</small>+42%</span></div>
     </button><button class="card" data-code="3110" type="button">
+      
       <div class="c-head"><span class="code">3110</span><span class="pill">日股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">日東紡</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">高階玻纖布（T-glass）</div>
+      <div class="c-tagrow"><div class="c-tag">高階玻纖布（T-glass）</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(20.12% - 6.90% + 4px)"></div><div class="tgt t1" style="left:70.30%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:70.30%;transform:translateX(-50%)">T1 33,000</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 38,000</span><span class="lbl b r0" style="left: 0px; transform: none;">買 19,100–22,000</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">19,100</b></span>
         <span class="gain"><small>買點1→TP1</small>+50%</span></div>
     </button><button class="card" data-code="AAOI" type="button">
+      
       <div class="c-head"><span class="code">AAOI</span><span class="pill">美股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">Applied Opto</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">光收發模組</div>
+      <div class="c-tagrow"><div class="c-tag">光收發模組</div></div>
       <div class="ladder"><div class="rail"></div><div class="tgt t1" style="left:6.90%"></div><div class="tgt t2" style="left:27.18%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:6.90%;transform:translateX(-2px)">T1 44</span><span class="lbl t r0" style="left:27.18%;transform:translateX(-50%)">T2 52</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 78</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">—</b></span>
         <span class="gain"></span></div>
     </button><button class="card" data-code="SNDK" type="button">
+      
       <div class="c-head"><span class="code">SNDK</span><span class="pill">美股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">Sandisk</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">NAND Flash 與 SSD</div>
+      <div class="c-tagrow"><div class="c-tag">NAND Flash 與 SSD</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(21.44% - 6.90% + 4px)"></div><div class="tgt t1" style="left:66.16%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:66.16%;transform:translateX(-50%)">T1 300</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 350</span><span class="lbl b r0" style="left:14.17%;transform:translateX(-50%)">買 190–217</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">190</b></span>
         <span class="gain"><small>買點1→TP1</small>+38%</span></div>
     </button><button class="card" data-code="LITE" type="button">
+      
       <div class="c-head"><span class="code">LITE</span><span class="pill">美股</span>
         
         <span class="score " title="平均分">未評</span></div>
       <div class="c-row"><div class="c-name">Lumentum</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
-      <div class="c-tag">光通訊雷射與光模組</div>
+      <div class="c-tagrow"><div class="c-tag">光通訊雷射與光模組</div></div>
       <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(30.41% - 6.90% + 4px)"></div><div class="tgt t1" style="left:53.92%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:53.92%;transform:translateX(-50%)">T1 330</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 380</span><span class="lbl b r0" style="left:18.65%;transform:translateX(-50%)">買 270–300</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">270</b></span>
         <span class="gain"><small>買點1→TP1</small>+10%</span></div>
@@ -658,7 +726,7 @@ const LV = [["sb","超級好買點","b"],["b2","買點2","b"],["b1","買點1","b
 
 let rows = DATA.rows, source = DATA.source;
 
-const state = {cat:"全部", mkt:"全部", q:"", sort:"order"};
+const state = {cat:"全部", mkt:"全部", st:"全部", q:"", sort:"order"};
 
 function avg(sc){ return sc && sc.length===3 && sc.every(isNum) ? (sc[0]+sc[1]+sc[2])/3 : null; }
 function gain(r){ return isNum(r.b1) && isNum(r.t1) ? r.t1/r.b1-1 : null; }
@@ -667,7 +735,7 @@ function gain(r){ return isNum(r.b1) && isNum(r.t1) ? r.t1/r.b1-1 : null; }
 function groups(){
   const m = new Map();
   rows.forEach((r,i) => { const k = String(r.code).toUpperCase(); if(!m.has(k)) m.set(k,{code:k,sets:[],order:i}); m.get(k).sets.push(r); });
-  return [...m.values()].map(g => { const p = g.sets[0]; return {...g, name:PROFILE[g.code]?.name||p.name||g.code, mkt:p.mkt, today:g.sets.some(s=>s.cat==="今日即時"), score:avg(p.sc), gain:gain(p), main:p, prof:PROFILE[g.code]}; });
+  return [...m.values()].map(g => { const p = g.sets[0]; return {...g, name:PROFILE[g.code]?.name||p.name||g.code, mkt:p.mkt, today:g.sets.some(s=>s.cat==="今日即時"), score:avg(p.sc), gain:gain(p), main:p, prof:PROFILE[g.code]}; }).map(g => { const s = buyState(g); g.st = s; g.dist = s ? s.dist : null; return g; });
 }
 
 const Q = code => (MARKET && MARKET.quotes && MARKET.quotes[String(code).toUpperCase()]) || null;
@@ -730,23 +798,29 @@ function render(){
     el.onclick = e => { const b=e.target.closest("button"); if(!b) return; state[key]=b.dataset.v; render(); }; };
   seg($("#segCat"), "cat", ["全部","今日即時","追蹤中"]);
   seg($("#segMkt"), "mkt", ["全部", ...[...new Set(all.map(g=>g.mkt).filter(Boolean))]]);
+  const nSt = k => all.filter(g => g.st && g.st.kind===k).length;
+  seg($("#segSt"), "st", ["全部", `買點區 ${nSt("buy")}`, `接近買點 ${nSt("near")}`, `已達目標 ${nSt("tp")}`].map(x=>x));
+  $("#segSt").querySelectorAll("button").forEach(b => { const base = b.dataset.v.replace(/\s\d+$/,""); b.dataset.v = base; b.setAttribute("aria-pressed", state.st===base); });
 
   const q = state.q.trim().toLowerCase();
   let list = all.filter(g => (state.cat==="全部" || (state.cat==="今日即時" ? g.today : !g.today))
     && (state.mkt==="全部" || g.mkt===state.mkt)
+    && (state.st==="全部" || (g.st && ST_LABEL[g.st.kind]===state.st))
     && (!q || [g.code, g.name, g.prof?.tag, g.prof?.ind, ...(g.prof?.ai||[])].join(" ").toLowerCase().includes(q)));
-  const by = {order:(a,b)=>a.order-b.order, score:(a,b)=>(b.score??-1)-(a.score??-1), gain:(a,b)=>(b.gain??-9)-(a.gain??-9), code:(a,b)=>a.code.localeCompare(b.code,"zh-Hant",{numeric:true})};
+  const by = {order:(a,b)=>a.order-b.order, score:(a,b)=>(b.score??-1)-(a.score??-1), gain:(a,b)=>(b.gain??-9)-(a.gain??-9), code:(a,b)=>a.code.localeCompare(b.code,"zh-Hant",{numeric:true}), dist:(a,b)=>(a.dist??9)-(b.dist??9)};
   list.sort(by[state.sort]);
   $("#count").textContent = `顯示 ${list.length} 檔`;
 
   $("#grid").innerHTML = list.length ? list.map(g => {
     const r = g.main, gn = g.gain;
-    return `<button class="card${g.today?" today":""}" data-code="${esc(g.code)}" type="button">
+    const stc = g.st && g.st.kind ? ` st-${g.st.kind}` : "";
+    return `<button class="card${g.today?" today":""}${stc}" data-code="${esc(g.code)}" type="button">
+      ${g.st && g.st.kind ? `<span class="st-chip ${g.st.kind}">${esc(g.st.text)}</span>` : ""}
       <div class="c-head"><span class="code">${esc(g.code)}</span><span class="pill">${esc(g.mkt||"")}</span>
         ${g.today?`<span class="pill hot">今日即時</span>`:""}${g.sets.length>1?`<span class="pill dup" title="Excel 裡有 ${g.sets.length} 組價位">${g.sets.length} 組</span>`:""}
         <span class="score ${scoreCls(g.score)}" title="平均分">${g.score!=null?g.score.toFixed(1):"未評"}</span></div>
       <div class="c-row"><div class="c-name">${esc(g.name)}</div>${nameQuote(g.code)}</div>
-      <div class="c-tag">${esc(g.prof?.tag || "尚未建立公司小檔案")}</div>
+      <div class="c-tagrow"><div class="c-tag">${esc(g.prof?.tag || "尚未建立公司小檔案")}</div>${peChip(g.code)}</div>
       ${ladder(r,false,Q(g.code)?.price)}
       <div class="c-foot"><span>最佳買點 <b class="best">${fmt(r.sb ?? r.b2 ?? r.b1)}</b></span>
         <span class="gain${gn<0?" neg":""}">${gn!=null?"<small>買點1→TP1</small>"+(gn>=0?"+":"")+Math.round(gn*100)+"%":""}</span></div>
@@ -768,6 +842,52 @@ function quoteRow(code){
   const q = Q(code);
   if(!q || !isNum(q.price)) return `<div class="c-quote"><span class="dot"></span><span class="wait">${MARKET&&MARKET.updated?"沒有行情資料":"等待行情資料"}</span></div>`;
   return `<div class="c-quote"><span class="dot"></span>現價 <b>${fmt(q.price)}</b><span class="chg ${q.pct>0?"up":q.pct<0?"dn":""}">${q.pct==null?"":(q.pct>0?"+":"")+(q.pct*100).toFixed(2)+"%"}</span></div>`;
+}
+// ---- 買點狀態：依現價和買點區間、目標價判斷
+const ST_LABEL = {buy:"買點區", near:"接近買點", tp:"已達目標"};
+const NEAR_PCT = 0.03;   // 距買點1 在 3% 以內算「接近買點」
+function buyState(g){
+  const q = Q(g.code), r = g.main; if(!q || !isNum(q.price)) return null;
+  const p = q.price, hi = isNum(r.b1) ? r.b1 : isNum(r.b2) ? r.b2 : r.sb, lo = isNum(r.sb) ? r.sb : isNum(r.b2) ? r.b2 : r.b1;
+  const tps = ["t3","t2","t1"].filter(k => isNum(r[k]) && p >= r[k]);
+  if(tps.length) return {kind:"tp", text:`已達 ${tps[0].toUpperCase()}`, dist: isNum(hi) ? p/hi-1 : 9};
+  if(!isNum(hi)) return null;
+  const d = p/hi-1;
+  if(p <= hi) return {kind:"buy", text: (isNum(lo) && p < lo) ? "低於最佳買點" : "進入買點區", dist:d};
+  if(d <= NEAR_PCT) return {kind:"near", text:`接近買點 +${(d*100).toFixed(1)}%`, dist:d};
+  return {kind:null, dist:d};
+}
+// ---- 本益比（pe.json 由 GitHub 每天收盤後更新）
+let PEDATA = null;
+const PE = code => PEDATA && PEDATA.data && PEDATA.data[String(code).toUpperCase()] || null;
+const peLevel = e => e && isNum(e.pct) ? (e.pct >= 0.8 ? "hi" : e.pct <= 0.2 ? "lo" : "") : "";
+const peWord = e => e && isNum(e.pct) ? (e.pct >= 0.8 ? "偏高" : e.pct <= 0.2 ? "偏低" : "中間") : "";
+function peChip(code){
+  const e = PE(code); if(!e || !isNum(e.per)) return "";
+  return `<span class="pe-chip ${peLevel(e)}" title="本益比，近 ${e.years||3} 年第 ${Math.round(e.pct*100)} 百分位">PE ${e.per.toFixed(1)}${peWord(e)?"・"+peWord(e):""}</span>`;
+}
+function valSection(code){
+  const e = PE(code);
+  if(!e) return /^\d{4}/.test(code) ? `<section class="sec"><h3>估值</h3><p class="biz" style="color:var(--muted)">還沒有本益比資料（每天收盤後更新）</p></section>` : "";
+  const facts = `<div class="facts">
+      <div class="fact"><div class="k">本益比 PE</div><div class="v num">${isNum(e.per)?e.per.toFixed(1):"—"}</div></div>
+      <div class="fact"><div class="k">股價淨值比 PB</div><div class="v num">${isNum(e.pbr)?e.pbr.toFixed(2):"—"}</div></div>
+      <div class="fact"><div class="k">殖利率</div><div class="v num">${isNum(e.dy)?e.dy.toFixed(2)+"%":"—"}</div></div>
+      <div class="fact"><div class="k">資料日期</div><div class="v num" style="font-size:14px">${esc(e.date||"")}</div></div></div>`;
+  let range = "";
+  if(isNum(e.per) && isNum(e.min) && isNum(e.max) && e.max > e.min){
+    const x = v => Math.max(0, Math.min(100, (v-e.min)/(e.max-e.min)*100)).toFixed(1)+"%";
+    range = `<div class="val-range"><div class="track"></div>
+        ${isNum(e.med)?`<div class="med" style="left:${x(e.med)}"></div><span class="lb m" style="left:${x(e.med)}">中位 ${e.med.toFixed(1)}</span>`:""}
+        <div class="cur" style="left:${x(e.per)}"></div><span class="lb top" style="left:${x(e.per)}">現在 ${e.per.toFixed(1)}</span>
+        <span class="lb">${e.min.toFixed(1)}</span><span class="lb r">${e.max.toFixed(1)}</span></div>
+      <p class="val-note">目前本益比高於近 ${e.years||3} 年 <b>${Math.round(e.pct*100)}%</b> 的交易日，屬於<b class="${peLevel(e)==="hi"?"pct up":peLevel(e)==="lo"?"pct dn":""}">${peWord(e)}</b>位置。${peLevel(e)==="hi"?"依你的檢討原則，PE 在歷史相對高檔時要注意風險。":""}</p>`;
+  }
+  return `<section class="sec"><h3>估值（近 ${e.years||3} 年本益比位置）</h3>${facts}${range}
+    <div class="src">本益比為證交所／櫃買中心依近四季 EPS 計算（非預估 PE），資料來源 FinMind，每天收盤後更新。</div></section>`;
+}
+async function loadPE(){
+  try{ const r = await fetch("pe.json?t=" + Date.now(), {cache:"no-store"}); if(r.ok){ PEDATA = await r.json(); render(); } }catch(_){}
 }
 function median(a){ const s=[...a].sort((x,y)=>x-y), m=s.length>>1; return s.length%2?s[m]:(s[m-1]+s[m])/2; }
 
@@ -806,6 +926,8 @@ function open(code){
         ${i===0?nowLine(code):""}${ladder(s,true,Q(code)?.price)}${setTable(s)}${s.note?`<div class="note" style="margin-top:10px">${esc(s.note)}</div>`:""}</div>`).join("")}
       ${g.sets.length>1?`<div class="src">這檔在 Excel 裡有 ${g.sets.length} 列，可能有舊價位沒刪，確認後留一列就好。</div>`:""}
     </section>
+
+    ${valSection(code)}
 
     <section class="sec"><h3>評分</h3>
       ${sc.some(isNum) ? `<div class="bars">${labs.map((l,i)=>`<div class="bar"><span>${l}</span><div class="track"><div class="fill" style="width:${isNum(sc[i])?sc[i]*10:0}%"></div></div><span class="n">${isNum(sc[i])?sc[i].toFixed(1):"—"}</span></div>`).join("")}
@@ -991,6 +1113,7 @@ async function loadMarket(){
 }
 render();
 loadExcel().then(loadMarket);
+loadPE();
 setInterval(loadExcel, 5 * 60 * 1000);
 setInterval(loadMarket, (LIVE_API ? 30 : 120) * 1000);
 </script>
