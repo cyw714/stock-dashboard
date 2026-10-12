@@ -68,13 +68,14 @@ button,input,select{font:inherit;color:inherit}
 .card:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
 .card.today{border-left:4px solid var(--hot);padding-left:13px}
 .card.st-buy{border-color:var(--down);box-shadow:0 0 0 1px var(--down) inset}
-.card.st-near{border-color:var(--down);border-style:dashed}
 .card.st-tp{border-color:var(--up);box-shadow:0 0 0 1px var(--up) inset}
-.card.today.st-buy,.card.today.st-near,.card.today.st-tp{border-left:4px solid var(--hot)}
-.st-chip{position:absolute;top:-10px;right:14px;font-size:11px;font-weight:700;padding:1px 9px;border-radius:999px;color:#fff;white-space:nowrap;line-height:18px}
-.st-chip.buy{background:var(--down)}
-.st-chip.near{background:var(--surface);color:var(--down);border:1px dashed var(--down)}
-.st-chip.tp{background:var(--up)}
+.card.today.st-buy,.card.today.st-tp{border-left:4px solid var(--hot)}
+.st-chip{position:absolute;top:-11px;right:14px;display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:1px 10px 1px 8px;border-radius:999px;white-space:nowrap;line-height:19px;background:var(--surface);border:1px solid currentColor}
+.st-chip.buy{color:var(--down)}
+.st-chip.tp{color:var(--up)}
+.led{width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 0 0 currentColor;animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 0 0 color-mix(in srgb,currentColor 55%,transparent)}50%{opacity:.25;box-shadow:0 0 0 5px color-mix(in srgb,currentColor 0%,transparent)}}
+@media (prefers-reduced-motion:reduce){.led{animation:none}}
 .c-tagrow{display:flex;align-items:flex-start;gap:8px}
 .c-tagrow .c-tag{flex:1;min-width:0}
 .pe-chip{flex:none;font-size:11px;font-family:var(--f-num);padding:1px 7px;border-radius:6px;background:var(--surface-2);color:var(--muted);white-space:nowrap;margin-top:1px}
@@ -87,6 +88,28 @@ button,input,select{font:inherit;color:inherit}
 .val-range .lb{position:absolute;top:32px;font-size:11px;font-family:var(--f-num);color:var(--muted)}
 .val-range .lb.r{right:0}.val-range .lb.m{transform:translateX(-50%)}
 .val-range .lb.top{top:0;color:var(--ink);font-weight:600;transform:translateX(-50%);white-space:nowrap}
+.newsbox{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.newsbox h3{margin:0 0 6px;font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:700;display:flex;justify-content:space-between}
+.newsbox h3 span{letter-spacing:0;font-weight:500}
+.nrow{display:grid;grid-template-columns:auto auto 1fr;gap:10px;align-items:baseline;padding:6px 0;border-top:1px solid var(--line);cursor:pointer;font-size:13.5px;text-align:left;background:none;border-left:0;border-right:0;border-bottom:0;width:100%;color:inherit;font-family:inherit}
+.nrow:first-of-type{border-top:0}
+.nrow:hover .nt{color:var(--accent)}
+.nrow .nd{font-family:var(--f-num);font-size:12px;color:var(--muted);white-space:nowrap}
+.nrow .nn{font-weight:700;white-space:nowrap}
+.nrow .nt{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.news-chip{flex:none;font-size:11px;padding:1px 7px;border-radius:6px;background:var(--accent-soft);color:var(--accent);white-space:nowrap;margin-top:1px;font-weight:600}
+.revchart{width:100%;height:auto;display:block;margin-top:4px}
+.rev-note{font-size:13.5px;margin:6px 0 0}
+.eps{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:4px}
+.eps th{font-size:12px;color:var(--muted);font-weight:500;text-align:right;padding:4px}
+.eps th:first-child,.eps td:first-child{text-align:left}
+.eps td{padding:6px 4px;border-top:1px solid var(--line);text-align:right;font-family:var(--f-num)}
+.ann{border-top:1px solid var(--line);padding:8px 0}
+.ann summary{cursor:pointer;font-size:14px;line-height:1.5;list-style:none}
+.ann summary::-webkit-details-marker{display:none}
+.ann .ad{font-family:var(--f-num);font-size:12px;color:var(--muted);margin-right:8px}
+.ann .ab{white-space:pre-wrap;font-size:13px;color:var(--muted);margin-top:6px;line-height:1.65;max-height:260px;overflow:auto}
+@media (max-width:720px){.nrow{grid-template-columns:auto 1fr;}.nrow .nd{grid-column:1/-1}}
 .val-note{font-size:13.5px;margin:8px 0 0;line-height:1.6}
 .c-head{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;min-width:0}
 .c-head .score{flex:none}
@@ -230,6 +253,7 @@ button,input,select{font:inherit;color:inherit}
   </header>
 
   <section class="stats" id="stats"><div class="stat"><div class="k">加權指數</div><div class="v num">—</div><div class="s">等待行情資料</div></div><div class="stat"><div class="k">台指期（近月）</div><div class="v num">—</div><div class="s">等待行情資料</div></div><div class="stat"><div class="k">那斯達克</div><div class="v num">—</div><div class="s">等待行情資料</div></div><div class="stat"><div class="k">費城半導體指數</div><div class="v num">—</div><div class="s">等待行情資料</div></div></section>
+  <section class="newsbox" id="newsbox" hidden></section>
 
   <nav class="filters" aria-label="篩選">
     <div class="seg" id="segCat" role="group" aria-label="分類"><button type="button" aria-pressed="true" data-v="全部">全部</button><button type="button" aria-pressed="false" data-v="今日即時">今日即時</button><button type="button" aria-pressed="false" data-v="追蹤中">追蹤中</button></div>
@@ -791,6 +815,7 @@ function render(){
   // stats
   const scored = all.filter(g=>g.score!=null), gains = all.map(g=>g.gain).filter(isNum);
   renderMarket();
+  renderNewsbox();
   $("#sub").textContent = "資料更新：" + source + (MARKET && MARKET.time_label ? "・行情 " + MARKET.time_label : "");
 
   // segs
@@ -799,7 +824,7 @@ function render(){
   seg($("#segCat"), "cat", ["全部","今日即時","追蹤中"]);
   seg($("#segMkt"), "mkt", ["全部", ...[...new Set(all.map(g=>g.mkt).filter(Boolean))]]);
   const nSt = k => all.filter(g => g.st && g.st.kind===k).length;
-  seg($("#segSt"), "st", ["全部", `買點區 ${nSt("buy")}`, `接近買點 ${nSt("near")}`, `已達目標 ${nSt("tp")}`].map(x=>x));
+  seg($("#segSt"), "st", ["全部", `買點區 ${nSt("buy")}`, `已達目標 ${nSt("tp")}`]);
   $("#segSt").querySelectorAll("button").forEach(b => { const base = b.dataset.v.replace(/\s\d+$/,""); b.dataset.v = base; b.setAttribute("aria-pressed", state.st===base); });
 
   const q = state.q.trim().toLowerCase();
@@ -813,14 +838,14 @@ function render(){
 
   $("#grid").innerHTML = list.length ? list.map(g => {
     const r = g.main, gn = g.gain;
-    const stc = g.st && g.st.kind ? ` st-${g.st.kind}` : "";
+    const stc = g.st && (g.st.kind==="buy"||g.st.kind==="tp") ? ` st-${g.st.kind}` : "";
     return `<button class="card${g.today?" today":""}${stc}" data-code="${esc(g.code)}" type="button">
-      ${g.st && g.st.kind ? `<span class="st-chip ${g.st.kind}">${esc(g.st.text)}</span>` : ""}
+      ${g.st && (g.st.kind==="buy"||g.st.kind==="tp") ? `<span class="st-chip ${g.st.kind}"><span class="led"></span>${esc(g.st.text)}</span>` : ""}
       <div class="c-head"><span class="code">${esc(g.code)}</span><span class="pill">${esc(g.mkt||"")}</span>
         ${g.today?`<span class="pill hot">今日即時</span>`:""}${g.sets.length>1?`<span class="pill dup" title="Excel 裡有 ${g.sets.length} 組價位">${g.sets.length} 組</span>`:""}
         <span class="score ${scoreCls(g.score)}" title="平均分">${g.score!=null?g.score.toFixed(1):"未評"}</span></div>
       <div class="c-row"><div class="c-name">${esc(g.name)}</div>${nameQuote(g.code)}</div>
-      <div class="c-tagrow"><div class="c-tag">${esc(g.prof?.tag || "尚未建立公司小檔案")}</div>${peChip(g.code)}</div>
+      <div class="c-tagrow"><div class="c-tag">${esc(g.prof?.tag || "尚未建立公司小檔案")}</div>${newsChip(g.code)}${peChip(g.code)}</div>
       ${ladder(r,false,Q(g.code)?.price)}
       <div class="c-foot"><span>最佳買點 <b class="best">${fmt(r.sb ?? r.b2 ?? r.b1)}</b></span>
         <span class="gain${gn<0?" neg":""}">${gn!=null?"<small>買點1→TP1</small>"+(gn>=0?"+":"")+Math.round(gn*100)+"%":""}</span></div>
@@ -886,6 +911,50 @@ function valSection(code){
   return `<section class="sec"><h3>估值（近 ${e.years||3} 年本益比位置）</h3>${facts}${range}
     <div class="src">本益比為證交所／櫃買中心依近四季 EPS 計算（非預估 PE），資料來源 FinMind，每天收盤後更新。</div></section>`;
 }
+// ---- 公開資訊（info.json：重大訊息、月營收、季報；由 GitHub 排程更新）
+let INFO = null;
+const yi = v => (v/1e8).toLocaleString("en-US",{maximumFractionDigits:2});
+const pct1 = v => v==null ? "—" : (v>0?"+":"") + (v*100).toFixed(1) + "%";
+const recentDays = 2;
+function newsOf(code){ return INFO && INFO.news ? INFO.news.filter(n => n.code === String(code)) : []; }
+function isRecent(d){ const t = new Date(d + "T00:00:00+08:00"); return (Date.now() - t) / 864e5 < recentDays; }
+function newsChip(code){ const n = newsOf(code).filter(x => isRecent(x.date)); return n.length ? `<span class="news-chip" title="${esc(n[0].title)}">新公告</span>` : ""; }
+function revSection(code){
+  const R = INFO && INFO.rev && INFO.rev[code]; if(!R || !R.length) return "";
+  const L = R.slice(-12), mx = Math.max(...L.map(r=>r.rev)), W = 480, H = 150, bw = W / L.length;
+  const bars = L.map((r,i) => { const h = Math.max(2, (r.rev/mx) * 92), x = i*bw + bw*0.18, last = i === L.length-1;
+    return `<rect x="${x.toFixed(1)}" y="${(104-h).toFixed(1)}" width="${(bw*0.64).toFixed(1)}" height="${h.toFixed(1)}" rx="2" fill="${last?"var(--hot)":"var(--line)"}"/>
+      <text x="${(i*bw+bw/2).toFixed(1)}" y="120" text-anchor="middle" font-size="10" fill="var(--muted)">${+r.ym.slice(5)}月</text>
+      <text x="${(i*bw+bw/2).toFixed(1)}" y="138" text-anchor="middle" font-size="9.5" fill="${r.yoy>0?"var(--up)":r.yoy<0?"var(--down)":"var(--muted)"}">${r.yoy==null?"":(r.yoy>0?"+":"")+Math.round(r.yoy*100)+"%"}</text>`; }).join("");
+  const a = L[L.length-1];
+  return `<section class="sec"><h3>月營收（近 12 個月，下排為年增率）</h3>
+    <svg class="revchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="近 12 個月營收長條圖">${bars}</svg>
+    <p class="rev-note">${a.ym.slice(0,4)} 年 ${+a.ym.slice(5)} 月營收 <b class="num">${yi(a.rev)} 億元</b>，年增 <b class="${a.yoy>0?"pct up":"pct dn"}">${pct1(a.yoy)}</b>，月增 <b class="${a.mom>0?"pct up":"pct dn"}">${pct1(a.mom)}</b></p></section>`;
+}
+function epsSection(code){
+  const E = INFO && INFO.eps && INFO.eps[code]; if(!E || !E.length) return "";
+  const rows = E.slice().reverse().map(e => `<tr><td>${esc(e.q)}</td><td>${e.eps==null?"—":e.eps.toFixed(2)}</td><td>${e.gm==null?"—":(e.gm*100).toFixed(1)+"%"}</td><td>${e.opm==null?"—":(e.opm*100).toFixed(1)+"%"}</td></tr>`).join("");
+  const last4 = E.slice(-4).reduce((s,e)=>s+(e.eps||0),0);
+  return `<section class="sec"><h3>季報（近 ${E.length} 季）</h3>
+    <table class="eps"><thead><tr><th>季別</th><th>EPS</th><th>毛利率</th><th>營益率</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="src">近四季 EPS 合計 ${last4.toFixed(2)} 元</div></section>`;
+}
+function newsSection(code){
+  const N = newsOf(code); if(!N.length) return /^\d{4}/.test(code) && INFO ? `<section class="sec"><h3>重大訊息</h3><p class="biz" style="color:var(--muted)">近 90 天沒有重大訊息</p></section>` : "";
+  return `<section class="sec"><h3>重大訊息（近 90 天）</h3>${N.slice(0,12).map(n => `<details class="ann"><summary><span class="ad">${esc(n.date.slice(5))} ${esc(n.time)}</span>${esc(n.title)}</summary><div class="ab">${esc(n.desc)}</div></details>`).join("")}
+    <div class="links" style="margin-top:8px"><a href="https://mops.twse.com.tw/mops/#/web/t05st01" target="_blank" rel="noopener">公開資訊觀測站 重大訊息</a></div></section>`;
+}
+function renderNewsbox(){
+  const box = $("#newsbox"); const N = INFO && INFO.news ? INFO.news.slice(0,6) : [];
+  if(!N.length){ box.hidden = true; return; }
+  const nameOf = c => (PROFILE[c] && PROFILE[c].name) || "";
+  box.hidden = false;
+  box.innerHTML = `<h3>追蹤清單最新公告<span>來源：公開資訊觀測站</span></h3>` + N.map(n => `<button type="button" class="nrow" data-code="${esc(n.code)}"><span class="nd">${esc(n.date.slice(5))} ${esc(n.time)}</span><span class="nn">${esc(nameOf(n.code) || n.name)}</span><span class="nt">${esc(n.title)}</span></button>`).join("");
+}
+$("#newsbox").addEventListener("click", e => { const b = e.target.closest(".nrow"); if(b) open(b.dataset.code); });
+async function loadInfo(){
+  try{ const r = await fetch("info.json?t=" + Date.now(), {cache:"no-store"}); if(r.ok){ INFO = await r.json(); render(); } }catch(_){}
+}
 async function loadPE(){
   try{ const r = await fetch("pe.json?t=" + Date.now(), {cache:"no-store"}); if(r.ok){ PEDATA = await r.json(); render(); } }catch(_){}
 }
@@ -928,6 +997,9 @@ function open(code){
     </section>
 
     ${valSection(code)}
+    ${revSection(code)}
+    ${epsSection(code)}
+    ${newsSection(code)}
 
     <section class="sec"><h3>評分</h3>
       ${sc.some(isNum) ? `<div class="bars">${labs.map((l,i)=>`<div class="bar"><span>${l}</span><div class="track"><div class="fill" style="width:${isNum(sc[i])?sc[i]*10:0}%"></div></div><span class="n">${isNum(sc[i])?sc[i].toFixed(1):"—"}</span></div>`).join("")}
@@ -1114,6 +1186,8 @@ async function loadMarket(){
 render();
 loadExcel().then(loadMarket);
 loadPE();
+loadInfo();
+setInterval(loadInfo, 10 * 60 * 1000);
 setInterval(loadExcel, 5 * 60 * 1000);
 setInterval(loadMarket, (LIVE_API ? 30 : 120) * 1000);
 </script>
