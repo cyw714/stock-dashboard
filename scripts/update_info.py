@@ -2,6 +2,7 @@
   - 重大訊息：證交所（上市）與櫃買中心（上櫃）開放資料的「每日重大訊息」，每次執行都會累積，保留 90 天
   - 月營收：近 13 個月營收與年增率、月增率（FinMind，資料來自公開資訊觀測站）
   - 季報：近 8 季 EPS、毛利率、營業利益率（FinMind）
+  - 新公布月營收紀錄（rev_log）、除權息預告（exdiv）：給 LINE 盤前晨報用
 用法：python update_info.py news   只更新重大訊息（盤中每 30 分鐘）
       python update_info.py all    全部更新（每天一次）
 """
@@ -92,6 +93,32 @@ def fetch_eps(code):
     return out
 
 
+def fetch_exdiv(codes):
+    """除權除息預告表（上市＋上櫃），只留追蹤清單裡的。"""
+    out = []
+    sources = [
+        ("https://openapi.twse.com.tw/v1/exchangeReport/TWT48U_ALL", "Date", "Code", "Name", "Exdividend", "CashDividend"),
+        ("https://www.tpex.org.tw/openapi/v1/tpex_exright_prepost", "ExRrightsExDividendDate", "SecuritiesCompanyCode", "CompanyName", "ExRrightsExDividend", "CashDividend"),
+    ]
+    for url, kd, kc, kn, kk, kcash in sources:
+        try:
+            data = get_json(url)
+        except Exception as e:
+            print("除權息預告失敗：", url, e)
+            continue
+        for d in data:
+            code = str(d.get(kc, "")).strip()
+            if code not in codes:
+                continue
+            kind = str(d.get(kk, "")).replace("除", "").strip() or "息"
+            try:
+                cash = float(str(d.get(kcash, "") or 0).replace(",", ""))
+            except ValueError:
+                cash = 0
+            out.append({"code": code, "name": str(d.get(kn, "")).strip(), "date": roc_date(d.get(kd)), "kind": kind, "cash": round(cash, 4) or None})
+    return out
+
+
 def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else "all"
     codes = [c for c, m in watchlist() if m == "台股"]
@@ -113,10 +140,15 @@ def main():
 
     if mode == "all":
         rev, eps = info.get("rev", {}), info.get("eps", {})
+        today = datetime.now(TW).strftime("%Y-%m-%d")
+        rev_log = info.get("rev_log", [])
         for c in codes:
             try:
                 r = fetch_revenue(c)
                 if r:
+                    old_ym = rev[c][-1]["ym"] if rev.get(c) else None
+                    if old_ym and r[-1]["ym"] > old_ym:   # 這次才出現的新月份 = 新公布月營收
+                        rev_log.append({"code": c, "seen": today, **r[-1]})
                     rev[c] = r
                 time.sleep(0.6)
                 e = fetch_eps(c)
@@ -127,6 +159,13 @@ def main():
                 print(c, "失敗：", ex)
                 time.sleep(2)
         info["rev"], info["eps"] = rev, eps
+        cutoff40 = (datetime.now(TW) - timedelta(days=40)).strftime("%Y-%m-%d")
+        info["rev_log"] = [x for x in rev_log if x["seen"] >= cutoff40]
+        try:
+            info["exdiv"] = fetch_exdiv(set(codes))
+            print("除權息預告", len(info["exdiv"]), "筆")
+        except Exception as ex:
+            print("除權息預告失敗：", ex)
         print("月營收", len(rev), "檔，季報", len(eps), "檔")
 
     if mode == "news" and not new and PATH.exists():
