@@ -48,6 +48,8 @@ def code_of(raw):
     t = str(raw).strip()
     if t.endswith(".0"):
         t = t[:-2]
+    if re.match(r"^(大盤|加權指數|加權|TAIEX|\^?TWII)$", t, re.I):
+        return "TAIEX", "指數"
     f = FOREIGN.get(t.upper()) or FOREIGN.get(t)
     if f:
         return f
@@ -161,6 +163,8 @@ def main():
         if mkt == "台股":
             price, prev = tw.get(code, (None, None))
             symbols = [] if (price and prev) else [code + ".TW", code + ".TWO"]
+        elif mkt == "指數":
+            symbols = ["%5ETWII"]
         elif mkt == "日股":
             symbols = [code + ".T"]
         else:
