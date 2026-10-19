@@ -140,6 +140,8 @@ button,input,select{font:inherit;color:inherit}
 .lbl.t{top:13px;color:var(--up)}.lbl.t.r1{top:0}
 .lbl.b{top:44px;color:var(--down)}
 .ladder .tgt.t2{opacity:.7}.ladder .tgt.t3{opacity:.45}
+.ladder .tgt.ix{background:var(--down);opacity:1}.ladder .tgt.ix.l2{opacity:.8}.ladder .tgt.ix.l3{opacity:.6}
+.lbl.t.ix{color:var(--down)}.big .lbl.t.ix{color:var(--down)}
 .ladder .now{position:absolute;top:28px;width:13px;height:13px;margin-left:-5px;border-radius:50%;background:var(--now);border:2px solid var(--surface);box-shadow:0 0 0 1px var(--now);z-index:2}
 .big .ladder .now{top:35px;width:15px;height:15px;margin-left:-6px}
 .c-quote{display:inline-flex;align-items:baseline;gap:6px;font-size:12px;color:var(--muted);white-space:nowrap}
@@ -279,7 +281,7 @@ button,input,select{font:inherit;color:inherit}
         </div>
       <div class="c-row"><div class="c-name">加權指數</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">避險加碼：46,000 加碼 25%・45,000 加碼 25%・43,200 加碼 50%</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(93.10% - 6.90% + 4px)"></div><span class="lbl b r0" style="left:50.00%;transform:translateX(-50%)">買 43,200–46,000</span></div>
+      <div class="ladder"><div class="rail"></div><div class="tgt ix l1" style="left:93.10%"></div><div class="tgt ix l2" style="left:62.32%"></div><div class="tgt ix l3" style="left:6.90%"></div><span class="lbl t ix r0" style="left:6.90%;transform:translateX(-2px)">43,200・50%</span><span class="lbl t ix r0" style="left:62.32%;transform:translateX(-50%)">45,000・25%</span><span class="lbl t ix r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">46,000・25%</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">43,200</b></span>
         <span class="gain"></span></div>
     </button><button class="card today" data-code="3037" type="button">
@@ -789,6 +791,17 @@ function ladder(r, big, now){
   const pct = v => (v-lo)/(hi-lo)*100, x = v => pct(v).toFixed(2)+"%";
   const buys = ["sb","b2","b1"].map(k=>r[k]).filter(isNum);
   let h = `<div class="ladder"><div class="rail"></div>`;
+  if(r.alloc){   // 大盤：三個加碼點各畫一條，標上加碼比例
+    const ks = ["b1","b2","sb"].filter(k=>isNum(r[k]));
+    ks.forEach((k,i)=>{ h += `<div class="tgt ix l${i+1}" style="left:${x(r[k])}"></div>`; });
+    if(isNum(now)) h += `<div class="now" style="left:${x(now)}" title="現價 ${fmt(now)}"></div>`;
+    const cw = big ? 1.45 : 2.5, lastEnd=[-1e9,-1e9];
+    ks.map((k,i)=>({v:r[k], text: big ? `第${i+1}次 ${fmt(r[k])}（${r.alloc[i]??"?"}%）` : `${fmt(r[k])}・${r.alloc[i]??"?"}%`})).sort((a,b)=>a.v-b.v).forEach(it=>{
+      const pos=pct(it.v), w=it.text.length*cw+3, row=(pos-w/2>lastEnd[0])?0:1; lastEnd[row]=pos+w/2;
+      const tf = pos<10 ? "translateX(-2px)" : pos>90 ? "translateX(calc(-100% + 3px))" : "translateX(-50%)";
+      h += `<span class="lbl t ix r${row}" style="left:${pos.toFixed(2)}%;transform:${tf}">${it.text}</span>`; });
+    return h + `</div>`;
+  }
   if(buys.length){ const a=Math.min(...buys), b=Math.max(...buys); h += `<div class="buy" style="left:${x(a)};width:calc(${x(b)} - ${x(a)} + 4px)"></div>`; }
   ["t1","t2","t3"].forEach((k,i)=>{ if(isNum(r[k])) h += `<div class="tgt t${i+1}" style="left:${x(r[k])}"></div>`; });
   if(isNum(now)) h += `<div class="now" style="left:${x(now)}" title="現價 ${fmt(now)}"></div>`;
