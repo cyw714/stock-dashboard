@@ -4,6 +4,8 @@ on:
   schedule:
     # 重大訊息：台灣時間週一到週五 08:00–21:30，每 30 分鐘（GitHub 用 UTC）
     - cron: "*/30 0-13 * * 1-5"
+    # 晨報前先補抓一次重大訊息：台灣時間週一到週五 07:40
+    - cron: "40 23 * * 0-4"
     # 月營收＋季報：每天台灣時間 18:50 全部更新一次
     - cron: "50 10 * * *"
   workflow_dispatch: {}
@@ -27,7 +29,7 @@ jobs:
       - name: 抓資料
         run: |
           MODE=all
-          if [ "${{ github.event.schedule }}" = "*/30 0-13 * * 1-5" ]; then MODE=news; fi
+          if [ "${{ github.event.schedule }}" = "*/30 0-13 * * 1-5" ] || [ "${{ github.event.schedule }}" = "40 23 * * 0-4" ]; then MODE=news; fi
           cd scripts && python update_info.py $MODE
       - name: 有變動才存檔
         run: |
