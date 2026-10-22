@@ -138,7 +138,11 @@ button,input,select{font:inherit;color:inherit}
 .ladder .tgt{position:absolute;top:27px;width:3px;height:15px;border-radius:2px;background:var(--up)}
 .lbl{position:absolute;font-size:11px;line-height:13px;white-space:nowrap;font-family:var(--f-num);font-weight:600}
 .lbl.t{top:13px;color:var(--up)}.lbl.t.r1{top:0}
-.lbl.b{top:44px;color:var(--down)}
+.lbl.b{top:44px;color:var(--down)}.lbl.b.r1{top:58px}
+.ladder:has(.lbl.b.r1){height:74px}
+.ladder .bk{position:absolute;top:28px;width:3px;height:13px;margin-left:-1px;border-radius:2px;background:var(--down)}.ladder .bk.l2{opacity:.75}.ladder .bk.l3{opacity:.55}
+.big .ladder .bk{top:33px;height:18px}
+.big .ladder:has(.lbl.b.r1){height:90px}
 .ladder .tgt.t2{opacity:.7}.ladder .tgt.t3{opacity:.45}
 .ladder .tgt.ix{background:var(--down);opacity:1}.ladder .tgt.ix.l2{opacity:.8}.ladder .tgt.ix.l3{opacity:.6}
 .lbl.t.ix{color:var(--down)}.big .lbl.t.ix{color:var(--down)}
@@ -291,7 +295,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.1</span></div>
       <div class="c-row"><div class="c-name">欣興</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">ABF 載板與高階 PCB 龍頭</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(19.87% - 6.90% + 4px)"></div><div class="tgt t1" style="left:46.57%"></div><div class="tgt t2" style="left:71.74%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:46.57%;transform:translateX(-50%)">T1 1,340</span><span class="lbl t r0" style="left:71.74%;transform:translateX(-50%)">T2 1,670</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 1,950</span><span class="lbl b r0" style="left:13.38%;transform:translateX(-50%)">買 820–990</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:19.87%" title="買點1 990"></div><div class="bk l2" style="left:13.76%" title="買點2 910"></div><div class="bk l3" style="left:6.90%" title="超級好買點 820"></div><div class="tgt t1" style="left:46.57%"></div><div class="tgt t2" style="left:71.74%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:46.57%;transform:translateX(-50%)">T1 1,340</span><span class="lbl t r0" style="left:71.74%;transform:translateX(-50%)">T2 1,670</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 1,950</span><span class="lbl b r0" style="left:15.10%;transform:translateX(-50%)">820／910／990</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">820</b></span>
         <span class="gain"><small>買點1→TP1</small>+35%</span></div>
     </button><button class="card today" data-code="2327" type="button">
@@ -301,7 +305,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.0</span></div>
       <div class="c-row"><div class="c-name">國巨</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">全球被動元件龍頭</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(17.91% - 6.90% + 4px)"></div><div class="tgt t1" style="left:52.89%"></div><div class="tgt t2" style="left:77.37%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:52.89%;transform:translateX(-50%)">T1 720</span><span class="lbl t r0" style="left:77.37%;transform:translateX(-50%)">T2 860</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 950</span><span class="lbl b r0" style="left:12.40%;transform:translateX(-50%)">買 457–520</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:17.91%" title="買點1 520"></div><div class="bk l2" style="left:6.90%" title="超級好買點 457"></div><div class="tgt t1" style="left:52.89%"></div><div class="tgt t2" style="left:77.37%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:52.89%;transform:translateX(-50%)">T1 720</span><span class="lbl t r0" style="left:77.37%;transform:translateX(-50%)">T2 860</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 950</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">457</span><span class="lbl b r0" style="left:17.91%;transform:translateX(-50%)">520</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">457</b></span>
         <span class="gain"><small>買點1→TP1</small>+38%</span></div>
     </button><button class="card today" data-code="2344" type="button">
@@ -311,7 +315,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.2</span></div>
       <div class="c-row"><div class="c-name">華邦電</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">利基型 DRAM 與 NOR／NAND Flash</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(17.00% - 6.90% + 4px)"></div><div class="tgt t1" style="left:37.81%"></div><div class="tgt t2" style="left:64.57%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:37.81%;transform:translateX(-50%)">T1 185</span><span class="lbl t r0" style="left:64.57%;transform:translateX(-50%)">T2 230</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 278</span><span class="lbl b r0" style="left:11.95%;transform:translateX(-50%)">買 133–150</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:17.00%" title="買點1 150"></div><div class="bk l2" style="left:6.90%" title="超級好買點 133"></div><div class="tgt t1" style="left:37.81%"></div><div class="tgt t2" style="left:64.57%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:37.81%;transform:translateX(-50%)">T1 185</span><span class="lbl t r0" style="left:64.57%;transform:translateX(-50%)">T2 230</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 278</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">133</span><span class="lbl b r1" style="left:17.00%;transform:translateX(-50%)">150</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">133</b></span>
         <span class="gain"><small>買點1→TP1</small>+23%</span></div>
     </button><button class="card today" data-code="3081" type="button">
@@ -321,7 +325,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.4</span></div>
       <div class="c-row"><div class="c-name">聯亞</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">InP 雷射與檢光磊晶片</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(21.71% - 6.90% + 4px)"></div><div class="tgt t1" style="left:55.53%"></div><div class="tgt t2" style="left:75.42%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:55.53%;transform:translateX(-50%)">T1 3,100</span><span class="lbl t r0" style="left:75.42%;transform:translateX(-50%)">T2 3,550</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 3,950</span><span class="lbl b r0" style="left: 0px; transform: none;">買 2,000–2,335</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:21.71%" title="買點1 2,335"></div><div class="bk l2" style="left:20.16%" title="買點2 2,300"></div><div class="bk l3" style="left:6.90%" title="超級好買點 2,000"></div><div class="tgt t1" style="left:55.53%"></div><div class="tgt t2" style="left:75.42%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:55.53%;transform:translateX(-50%)">T1 3,100</span><span class="lbl t r0" style="left:75.42%;transform:translateX(-50%)">T2 3,550</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 3,950</span><span class="lbl b r0" style="left: 0px; transform: none;">2,000／2,300／2,335</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">2,000</b></span>
         <span class="gain"><small>買點1→TP1</small>+33%</span></div>
     </button><button class="card today" data-code="3529" type="button">
@@ -331,7 +335,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.3</span></div>
       <div class="c-row"><div class="c-name">力旺</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">嵌入式非揮發記憶體 IP</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(32.99% - 6.90% + 4px)"></div><div class="tgt t1" style="left:62.81%"></div><div class="tgt t2" style="left:76.79%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:62.81%;transform:translateX(-50%)">T1 3,200</span><span class="lbl t r1" style="left:76.79%;transform:translateX(-50%)">T2 3,500</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 3,850</span><span class="lbl b r0" style="left:19.94%;transform:translateX(-50%)">買 2,000–2,560</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:32.99%" title="買點1 2,560"></div><div class="bk l2" style="left:18.31%" title="買點2 2,245"></div><div class="bk l3" style="left:6.90%" title="超級好買點 2,000"></div><div class="tgt t1" style="left:62.81%"></div><div class="tgt t2" style="left:76.79%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:62.81%;transform:translateX(-50%)">T1 3,200</span><span class="lbl t r1" style="left:76.79%;transform:translateX(-50%)">T2 3,500</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 3,850</span><span class="lbl b r0" style="left:22.80%;transform:translateX(-50%)">2,000／2,245／2,560</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">2,000</b></span>
         <span class="gain"><small>買點1→TP1</small>+25%</span></div>
     </button><button class="card today" data-code="6147" type="button">
@@ -341,7 +345,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.3</span></div>
       <div class="c-row"><div class="c-name">頎邦</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">驅動 IC 金凸塊與 COF 封測龍頭</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(15.11% - 6.90% + 4px)"></div><div class="tgt t1" style="left:49.59%"></div><div class="tgt t2" style="left:64.37%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:49.59%;transform:translateX(-50%)">T1 274</span><span class="lbl t r1" style="left:64.37%;transform:translateX(-50%)">T2 310</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 380</span><span class="lbl b r0" style="left:11.00%;transform:translateX(-50%)">買 170–190</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:15.11%" title="買點1 190"></div><div class="bk l2" style="left:6.90%" title="超級好買點 170"></div><div class="tgt t1" style="left:49.59%"></div><div class="tgt t2" style="left:64.37%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:49.59%;transform:translateX(-50%)">T1 274</span><span class="lbl t r1" style="left:64.37%;transform:translateX(-50%)">T2 310</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 380</span><span class="lbl b r0" style="left:11.00%;transform:translateX(-50%)">170／190</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">170</b></span>
         <span class="gain"><small>買點1→TP1</small>+44%</span></div>
     </button><button class="card today" data-code="6531" type="button">
@@ -351,7 +355,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.4</span></div>
       <div class="c-row"><div class="c-name">愛普</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">PSRAM 與矽電容，打進先進封裝</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(31.83% - 6.90% + 4px)"></div><div class="tgt t1" style="left:62.46%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:62.46%;transform:translateX(-50%)">T1 1,020</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 1,240</span><span class="lbl b r0" style="left:19.36%;transform:translateX(-50%)">買 621–800</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:31.83%" title="買點1 800"></div><div class="bk l2" style="left:22.77%" title="買點2 735"></div><div class="bk l3" style="left:6.90%" title="超級好買點 621"></div><div class="tgt t1" style="left:62.46%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:62.46%;transform:translateX(-50%)">T1 1,020</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 1,240</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">621</span><span class="lbl b r0" style="left:27.30%;transform:translateX(-50%)">735／800</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">621</b></span>
         <span class="gain"><small>買點1→TP1</small>+27%</span></div>
     </button><button class="card" data-code="3653" type="button">
@@ -361,7 +365,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.9</span></div>
       <div class="c-row"><div class="c-name">健策</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">均熱片與液冷散熱模組</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(20.16% - 6.90% + 4px)"></div><div class="tgt t1" style="left:55.53%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:55.53%;transform:translateX(-50%)">T1 8,300</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 10,000</span><span class="lbl b r0" style="left: 0px; transform: none;">買 6,100–6,700</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:20.16%" title="買點1 6,700"></div><div class="bk l2" style="left:15.74%" title="買點2 6,500"></div><div class="bk l3" style="left:6.90%" title="超級好買點 6,100"></div><div class="tgt t1" style="left:55.53%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:55.53%;transform:translateX(-50%)">T1 8,300</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 10,000</span><span class="lbl b r0" style="left: 0px; transform: none;">6,100／6,500／6,700</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">6,100</b></span>
         <span class="gain"><small>買點1→TP1</small>+24%</span></div>
     </button><button class="card" data-code="3595" type="button">
@@ -371,7 +375,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.7</span></div>
       <div class="c-row"><div class="c-name">山太士</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">面板與先進封裝製程保護膜</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(14.64% - 6.90% + 4px)"></div><div class="tgt t1" style="left:40.32%"></div><div class="tgt t2" style="left:68.47%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:40.32%;transform:translateX(-50%)">T1 2,200</span><span class="lbl t r0" style="left:68.47%;transform:translateX(-50%)">T2 3,000</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 3,700</span><span class="lbl b r0" style="left: 0px; transform: none;">買 1,250–1,470</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:14.64%" title="買點1 1,470"></div><div class="bk l2" style="left:6.90%" title="超級好買點 1,250"></div><div class="tgt t1" style="left:40.32%"></div><div class="tgt t2" style="left:68.47%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:40.32%;transform:translateX(-50%)">T1 2,200</span><span class="lbl t r0" style="left:68.47%;transform:translateX(-50%)">T2 3,000</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 3,700</span><span class="lbl b r0" style="left: 0px; transform: none;">1,250／1,470</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">1,250</b></span>
         <span class="gain"><small>買點1→TP1</small>+50%</span></div>
     </button><button class="card" data-code="3533" type="button">
@@ -381,7 +385,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.6</span></div>
       <div class="c-row"><div class="c-name">嘉澤</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">CPU／GPU Socket 連接器</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(14.88% - 6.90% + 4px)"></div><div class="tgt t1" style="left:38.83%"></div><div class="tgt t2" style="left:57.98%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:38.83%;transform:translateX(-50%)">T1 2,600</span><span class="lbl t r1" style="left:57.98%;transform:translateX(-50%)">T2 3,200</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 4,300</span><span class="lbl b r0" style="left: 0px; transform: none;">買 1,600–1,850</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:14.88%" title="買點1 1,850"></div><div class="bk l2" style="left:12.32%" title="買點2 1,770"></div><div class="bk l3" style="left:6.90%" title="超級好買點 1,600"></div><div class="tgt t1" style="left:38.83%"></div><div class="tgt t2" style="left:57.98%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:38.83%;transform:translateX(-50%)">T1 2,600</span><span class="lbl t r1" style="left:57.98%;transform:translateX(-50%)">T2 3,200</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 4,300</span><span class="lbl b r0" style="left: 0px; transform: none;">1,600／1,770／1,850</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">1,600</b></span>
         <span class="gain"><small>買點1→TP1</small>+41%</span></div>
     </button><button class="card" data-code="7769" type="button">
@@ -391,7 +395,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.8</span></div>
       <div class="c-row"><div class="c-name">鴻勁</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">IC 測試分選機與溫控方案</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(18.79% - 6.90% + 4px)"></div><div class="tgt t1" style="left:52.48%"></div><div class="tgt t2" style="left:75.27%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:52.48%;transform:translateX(-50%)">T1 8,000</span><span class="lbl t r0" style="left:75.27%;transform:translateX(-50%)">T2 9,150</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 10,050</span><span class="lbl b r0" style="left: 0px; transform: none;">買 5,700–6,300</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:18.79%" title="買點1 6,300"></div><div class="bk l2" style="left:12.84%" title="買點2 6,000"></div><div class="bk l3" style="left:6.90%" title="超級好買點 5,700"></div><div class="tgt t1" style="left:52.48%"></div><div class="tgt t2" style="left:75.27%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:52.48%;transform:translateX(-50%)">T1 8,000</span><span class="lbl t r0" style="left:75.27%;transform:translateX(-50%)">T2 9,150</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 10,050</span><span class="lbl b r0" style="left: 0px; transform: none;">5,700／6,000／6,300</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">5,700</b></span>
         <span class="gain"><small>買點1→TP1</small>+27%</span></div>
     </button><button class="card" data-code="6190" type="button">
@@ -401,7 +405,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.7</span></div>
       <div class="c-row"><div class="c-name">萬泰科</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">網路線、電源線與電子線材</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(18.39% - 6.90% + 4px)"></div><div class="tgt t1" style="left:49.04%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:49.04%;transform:translateX(-50%)">T1 86</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 109</span><span class="lbl b r0" style="left:12.64%;transform:translateX(-50%)">買 64–70</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:18.39%" title="買點1 70"></div><div class="bk l2" style="left:12.64%" title="買點2 67"></div><div class="bk l3" style="left:6.90%" title="超級好買點 64"></div><div class="tgt t1" style="left:49.04%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:49.04%;transform:translateX(-50%)">T1 86</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 109</span><span class="lbl b r0" style="left:14.08%;transform:translateX(-50%)">64／67／70</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">64</b></span>
         <span class="gain"><small>買點1→TP1</small>+23%</span></div>
     </button><button class="card" data-code="2337" type="button">
@@ -411,7 +415,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.9</span></div>
       <div class="c-row"><div class="c-name">旺宏</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">NOR Flash 與 ROM 大廠</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(24.28% - 6.90% + 4px)"></div><div class="tgt t1" style="left:49.64%"></div><div class="tgt t2" style="left:71.37%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:49.64%;transform:translateX(-50%)">T1 160</span><span class="lbl t r0" style="left:71.37%;transform:translateX(-50%)">T2 190</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 220</span><span class="lbl b r0" style="left:15.59%;transform:translateX(-50%)">買 101–125</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:24.28%" title="買點1 125"></div><div class="bk l2" style="left:19.21%" title="買點2 118"></div><div class="bk l3" style="left:6.90%" title="超級好買點 101"></div><div class="tgt t1" style="left:49.64%"></div><div class="tgt t2" style="left:71.37%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:49.64%;transform:translateX(-50%)">T1 160</span><span class="lbl t r0" style="left:71.37%;transform:translateX(-50%)">T2 190</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 220</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">101</span><span class="lbl b r1" style="left:21.75%;transform:translateX(-50%)">118／125</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">101</b></span>
         <span class="gain"><small>買點1→TP1</small>+28%</span></div>
     </button><button class="card" data-code="3665" type="button">
@@ -421,7 +425,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.6</span></div>
       <div class="c-row"><div class="c-name">貿聯-KY</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">高速線束與伺服器連接線組</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(12.84% - 6.90% + 4px)"></div><div class="tgt t1" style="left:51.49%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:51.49%;transform:translateX(-50%)">T1 2,900</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 3,600</span><span class="lbl b r0" style="left:9.87%;transform:translateX(-2px)">買 2,150–2,250</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:12.84%" title="買點1 2,250"></div><div class="bk l2" style="left:6.90%" title="超級好買點 2,150"></div><div class="tgt t1" style="left:51.49%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:51.49%;transform:translateX(-50%)">T1 2,900</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 3,600</span><span class="lbl b r0" style="left:9.87%;transform:translateX(-2px)">2,150／2,250</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">2,150</b></span>
         <span class="gain"><small>買點1→TP1</small>+29%</span></div>
     </button><button class="card" data-code="6907" type="button">
@@ -431,7 +435,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.1</span></div>
       <div class="c-row"><div class="c-name">雅特力-KY</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">ARM 架構 MCU 設計</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(11.36% - 6.90% + 4px)"></div><div class="tgt t1" style="left:48.51%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:48.51%;transform:translateX(-50%)">T1 280</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 400</span><span class="lbl b r0" style="left:9.13%;transform:translateX(-2px)">買 168–180</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:11.36%" title="買點1 180"></div><div class="bk l2" style="left:6.90%" title="超級好買點 168"></div><div class="tgt t1" style="left:48.51%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:48.51%;transform:translateX(-50%)">T1 280</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 400</span><span class="lbl b r0" style="left:9.13%;transform:translateX(-2px)">168／180</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">168</b></span>
         <span class="gain"><small>買點1→TP1</small>+56%</span></div>
     </button><button class="card" data-code="3234" type="button">
@@ -441,7 +445,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.1</span></div>
       <div class="c-row"><div class="c-name">光環</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">VCSEL 與光通訊雷射、檢光元件</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(23.39% - 6.90% + 4px)"></div><div class="tgt t1" style="left:48.13%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:48.13%;transform:translateX(-50%)">T1 220</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 280</span><span class="lbl b r0" style="left:15.14%;transform:translateX(-50%)">買 165–187</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:23.39%" title="買點1 187"></div><div class="bk l2" style="left:18.89%" title="買點2 181"></div><div class="bk l3" style="left:6.90%" title="超級好買點 165"></div><div class="tgt t1" style="left:48.13%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:48.13%;transform:translateX(-50%)">T1 220</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 280</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">165</span><span class="lbl b r1" style="left:21.14%;transform:translateX(-50%)">181／187</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">165</b></span>
         <span class="gain"><small>買點1→TP1</small>+18%</span></div>
     </button><button class="card" data-code="6139" type="button">
@@ -451,7 +455,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.8</span></div>
       <div class="c-row"><div class="c-name">亞翔</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">無塵室機電整合工程</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(11.82% - 6.90% + 4px)"></div><div class="tgt t1" style="left:63.55%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:63.55%;transform:translateX(-50%)">T1 980</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 1,100</span><span class="lbl b r0" style="left:9.36%;transform:translateX(-2px)">買 750–770</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:11.82%" title="買點1 770"></div><div class="bk l2" style="left:6.90%" title="超級好買點 750"></div><div class="tgt t1" style="left:63.55%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:63.55%;transform:translateX(-50%)">T1 980</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 1,100</span><span class="lbl b r0" style="left:9.36%;transform:translateX(-2px)">750／770</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">750</b></span>
         <span class="gain"><small>買點1→TP1</small>+27%</span></div>
     </button><button class="card" data-code="3376" type="button">
@@ -461,7 +465,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.8</span></div>
       <div class="c-row"><div class="c-name">新日興</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">筆電與手機樞紐（轉軸）</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(12.10% - 6.90% + 4px)"></div><div class="tgt t1" style="left:35.25%"></div><div class="tgt t2" style="left:52.60%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:35.25%;transform:translateX(-50%)">T1 250</span><span class="lbl t r0" style="left:52.60%;transform:translateX(-50%)">T2 280</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 350</span><span class="lbl b r0" style="left:9.50%;transform:translateX(-2px)">買 201–210</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:12.10%" title="買點1 210"></div><div class="bk l2" style="left:6.90%" title="超級好買點 201"></div><div class="tgt t1" style="left:35.25%"></div><div class="tgt t2" style="left:52.60%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:35.25%;transform:translateX(-50%)">T1 250</span><span class="lbl t r0" style="left:52.60%;transform:translateX(-50%)">T2 280</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 350</span><span class="lbl b r0" style="left:9.50%;transform:translateX(-2px)">201／210</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">201</b></span>
         <span class="gain"><small>買點1→TP1</small>+19%</span></div>
     </button><button class="card" data-code="CRDO" type="button">
@@ -471,7 +475,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.9</span></div>
       <div class="c-row"><div class="c-name">Credo</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">AEC 主動式電纜與 SerDes</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(17.16% - 6.90% + 4px)"></div><div class="tgt t1" style="left:39.74%"></div><div class="tgt t2" style="left:72.58%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:39.74%;transform:translateX(-50%)">T1 280</span><span class="lbl t r0" style="left:72.58%;transform:translateX(-50%)">T2 360</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 410</span><span class="lbl b r0" style="left:12.03%;transform:translateX(-50%)">買 200–225</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:17.16%" title="買點1 225"></div><div class="bk l2" style="left:11.82%" title="買點2 212"></div><div class="bk l3" style="left:6.90%" title="超級好買點 200"></div><div class="tgt t1" style="left:39.74%"></div><div class="tgt t2" style="left:72.58%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:39.74%;transform:translateX(-50%)">T1 280</span><span class="lbl t r0" style="left:72.58%;transform:translateX(-50%)">T2 360</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 410</span><span class="lbl b r0" style="left: 0px; transform: none;">200／212／225</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">200</b></span>
         <span class="gain"><small>買點1→TP1</small>+24%</span></div>
     </button><button class="card" data-code="7610" type="button">
@@ -481,7 +485,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.0</span></div>
       <div class="c-row"><div class="c-name">聯友金屬-創</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">鎢、鈷化學品（創新板）</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(28.45% - 6.90% + 4px)"></div><div class="tgt t1" style="left:55.39%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:55.39%;transform:translateX(-50%)">T1 2,400</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 3,100</span><span class="lbl b r0" style="left:17.67%;transform:translateX(-50%)">買 1,500–1,900</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:28.45%" title="買點1 1,900"></div><div class="bk l2" style="left:15.52%" title="買點2 1,660"></div><div class="bk l3" style="left:6.90%" title="超級好買點 1,500"></div><div class="tgt t1" style="left:55.39%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:55.39%;transform:translateX(-50%)">T1 2,400</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 3,100</span><span class="lbl b r0" style="left: 0px; transform: none;">1,500／1,660／1,900</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">1,500</b></span>
         <span class="gain"><small>買點1→TP1</small>+26%</span></div>
     </button><button class="card" data-code="6725" type="button">
@@ -491,7 +495,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.8</span></div>
       <div class="c-row"><div class="c-name">矽科宏晟</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">高科技廠製程廠務系統整合</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(10.42% - 6.90% + 4px)"></div><div class="tgt t1" style="left:38.61%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:38.61%;transform:translateX(-50%)">T1 420</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 652</span><span class="lbl b r0" style="left:8.66%;transform:translateX(-2px)">買 285–300</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:10.42%" title="買點1 300"></div><div class="bk l2" style="left:6.90%" title="超級好買點 285"></div><div class="tgt t1" style="left:38.61%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:38.61%;transform:translateX(-50%)">T1 420</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 652</span><span class="lbl b r0" style="left:8.66%;transform:translateX(-2px)">285／300</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">285</b></span>
         <span class="gain"><small>買點1→TP1</small>+40%</span></div>
     </button><button class="card" data-code="2441" type="button">
@@ -501,7 +505,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">7.2</span></div>
       <div class="c-row"><div class="c-name">超豐</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">傳統 IC 封裝測試</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(19.41% - 6.90% + 4px)"></div><div class="tgt t1" style="left:68.08%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:68.08%;transform:translateX(-50%)">T1 155</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 173</span><span class="lbl b r0" style="left:13.15%;transform:translateX(-50%)">買 111–120</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:19.41%" title="買點1 120"></div><div class="bk l2" style="left:6.90%" title="超級好買點 111"></div><div class="tgt t1" style="left:68.08%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:68.08%;transform:translateX(-50%)">T1 155</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 173</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">111</span><span class="lbl b r0" style="left:19.41%;transform:translateX(-50%)">120</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">111</b></span>
         <span class="gain"><small>買點1→TP1</small>+29%</span></div>
     </button><button class="card" data-code="4966" type="button">
@@ -511,7 +515,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.0</span></div>
       <div class="c-row"><div class="c-name">譜瑞-KY</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">高速傳輸介面與顯示晶片</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(6.90% - 6.90% + 4px)"></div><div class="tgt t1" style="left:41.87%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:41.87%;transform:translateX(-50%)">T1 702</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 910</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">買 560</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:6.90%" title="超級好買點 560"></div><div class="tgt t1" style="left:41.87%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:41.87%;transform:translateX(-50%)">T1 702</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 910</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">560</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">560</b></span>
         <span class="gain"></span></div>
     </button><button class="card" data-code="4971" type="button">
@@ -521,7 +525,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.4</span></div>
       <div class="c-row"><div class="c-name">IET-KY</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">GaAs／InP 磊晶片</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(13.05% - 6.90% + 4px)"></div><div class="tgt t1" style="left:54.11%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:54.11%;transform:translateX(-50%)">T1 620</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 810</span><span class="lbl b r0" style="left:9.98%;transform:translateX(-2px)">買 390–420</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:13.05%" title="買點1 420"></div><div class="bk l2" style="left:6.90%" title="超級好買點 390"></div><div class="tgt t1" style="left:54.11%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:54.11%;transform:translateX(-50%)">T1 620</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 810</span><span class="lbl b r0" style="left:9.98%;transform:translateX(-2px)">390／420</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">390</b></span>
         <span class="gain"><small>買點1→TP1</small>+48%</span></div>
     </button><button class="card" data-code="5347" type="button">
@@ -531,7 +535,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.0</span></div>
       <div class="c-row"><div class="c-name">世界</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">特殊製程晶圓代工</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(8.55% - 6.90% + 4px)"></div><div class="tgt t1" style="left:30.11%"></div><div class="tgt t2" style="left:59.95%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:30.11%;transform:translateX(-50%)">T1 260</span><span class="lbl t r0" style="left:59.95%;transform:translateX(-50%)">T2 350</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 450</span><span class="lbl b r0" style="left:7.73%;transform:translateX(-2px)">買 190–195</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:8.55%" title="買點1 195"></div><div class="bk l2" style="left:6.90%" title="超級好買點 190"></div><div class="tgt t1" style="left:30.11%"></div><div class="tgt t2" style="left:59.95%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:30.11%;transform:translateX(-50%)">T1 260</span><span class="lbl t r0" style="left:59.95%;transform:translateX(-50%)">T2 350</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 450</span><span class="lbl b r0" style="left:7.73%;transform:translateX(-2px)">190／195</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">190</b></span>
         <span class="gain"><small>買點1→TP1</small>+33%</span></div>
     </button><button class="card" data-code="6805" type="button">
@@ -541,7 +545,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.0</span></div>
       <div class="c-row"><div class="c-name">富世達</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">樞紐與液冷快接頭</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(22.19% - 6.90% + 4px)"></div><div class="tgt t1" style="left:65.29%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:65.29%;transform:translateX(-50%)">T1 2,100</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 2,400</span><span class="lbl b r0" style="left: 0px; transform: none;">買 1,470–1,635</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:22.19%" title="買點1 1,635"></div><div class="bk l2" style="left:6.90%" title="超級好買點 1,470"></div><div class="tgt t1" style="left:65.29%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:65.29%;transform:translateX(-50%)">T1 2,100</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 2,400</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">1,470</span><span class="lbl b r1" style="left:22.19%;transform:translateX(-50%)">1,635</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">1,470</b></span>
         <span class="gain"><small>買點1→TP1</small>+28%</span></div>
     </button><button class="card" data-code="8299" type="button">
@@ -551,7 +555,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.0</span></div>
       <div class="c-row"><div class="c-name">群聯</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">NAND 控制晶片與儲存方案</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(21.89% - 6.90% + 4px)"></div><div class="tgt t1" style="left:55.62%"></div><div class="tgt t2" style="left:74.36%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:55.62%;transform:translateX(-50%)">T1 3,400</span><span class="lbl t r1" style="left:74.36%;transform:translateX(-50%)">T2 3,900</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 4,400</span><span class="lbl b r0" style="left: 0px; transform: none;">買 2,100–2,500</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:21.89%" title="買點1 2,500"></div><div class="bk l2" style="left:10.64%" title="買點2 2,200"></div><div class="bk l3" style="left:6.90%" title="超級好買點 2,100"></div><div class="tgt t1" style="left:55.62%"></div><div class="tgt t2" style="left:74.36%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:55.62%;transform:translateX(-50%)">T1 3,400</span><span class="lbl t r1" style="left:74.36%;transform:translateX(-50%)">T2 3,900</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 4,400</span><span class="lbl b r0" style="left: 0px; transform: none;">2,100／2,200／2,500</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">2,100</b></span>
         <span class="gain"><small>買點1→TP1</small>+36%</span></div>
     </button><button class="card" data-code="4989" type="button">
@@ -561,7 +565,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.8</span></div>
       <div class="c-row"><div class="c-name">榮科</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">電解銅箔</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(16.10% - 6.90% + 4px)"></div><div class="tgt t1" style="left:51.26%"></div><div class="tgt t2" style="left:71.34%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:51.26%;transform:translateX(-50%)">T1 130</span><span class="lbl t r0" style="left:71.34%;transform:translateX(-50%)">T2 154</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 180</span><span class="lbl b r0" style="left:11.50%;transform:translateX(-50%)">買 77–88</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:16.10%" title="買點1 88"></div><div class="bk l2" style="left:6.90%" title="超級好買點 77"></div><div class="tgt t1" style="left:51.26%"></div><div class="tgt t2" style="left:71.34%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:51.26%;transform:translateX(-50%)">T1 130</span><span class="lbl t r0" style="left:71.34%;transform:translateX(-50%)">T2 154</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 180</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">77</span><span class="lbl b r0" style="left:16.10%;transform:translateX(-50%)">88</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">77</b></span>
         <span class="gain"><small>買點1→TP1</small>+48%</span></div>
     </button><button class="card" data-code="2329" type="button">
@@ -571,7 +575,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.3</span></div>
       <div class="c-row"><div class="c-name">華泰</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">記憶體封測與 EMS</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(14.08% - 6.90% + 4px)"></div><div class="tgt t1" style="left:37.43%"></div><div class="tgt t2" style="left:66.16%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:37.43%;transform:translateX(-50%)">T1 88</span><span class="lbl t r0" style="left:66.16%;transform:translateX(-50%)">T2 120</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 150</span><span class="lbl b r0" style="left:10.49%;transform:translateX(-50%)">買 54–62</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:14.08%" title="買點1 62"></div><div class="bk l2" style="left:10.49%" title="買點2 58"></div><div class="bk l3" style="left:6.90%" title="超級好買點 54"></div><div class="tgt t1" style="left:37.43%"></div><div class="tgt t2" style="left:66.16%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:37.43%;transform:translateX(-50%)">T1 88</span><span class="lbl t r0" style="left:66.16%;transform:translateX(-50%)">T2 120</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 150</span><span class="lbl b r0" style="left:11.39%;transform:translateX(-50%)">54／58／62</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">54</b></span>
         <span class="gain"><small>買點1→TP1</small>+42%</span></div>
     </button><button class="card" data-code="3026" type="button">
@@ -581,7 +585,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.3</span></div>
       <div class="c-row"><div class="c-name">禾伸堂</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">MLCC 與被動元件</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(19.21% - 6.90% + 4px)"></div><div class="tgt t1" style="left:50.00%"></div><div class="tgt t2" style="left:74.63%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:50.00%;transform:translateX(-50%)">T1 1,150</span><span class="lbl t r0" style="left:74.63%;transform:translateX(-50%)">T2 1,350</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 1,500</span><span class="lbl b r0" style="left:13.05%;transform:translateX(-50%)">買 800–900</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:19.21%" title="買點1 900"></div><div class="bk l2" style="left:6.90%" title="超級好買點 800"></div><div class="tgt t1" style="left:50.00%"></div><div class="tgt t2" style="left:74.63%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:50.00%;transform:translateX(-50%)">T1 1,150</span><span class="lbl t r0" style="left:74.63%;transform:translateX(-50%)">T2 1,350</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 1,500</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">800</span><span class="lbl b r0" style="left:19.21%;transform:translateX(-50%)">900</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">800</b></span>
         <span class="gain"><small>買點1→TP1</small>+28%</span></div>
     </button><button class="card" data-code="6173" type="button">
@@ -591,7 +595,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">7.4</span></div>
       <div class="c-row"><div class="c-name">信昌電</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">晶片電容、電阻與介電瓷粉</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(24.68% - 6.90% + 4px)"></div><div class="tgt t1" style="left:50.00%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:50.00%;transform:translateX(-50%)">T1 280</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 360</span><span class="lbl b r0" style="left:15.79%;transform:translateX(-50%)">買 200–233</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:24.68%" title="買點1 233"></div><div class="bk l2" style="left:6.90%" title="超級好買點 200"></div><div class="tgt t1" style="left:50.00%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:50.00%;transform:translateX(-50%)">T1 280</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 360</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">200</span><span class="lbl b r0" style="left:24.68%;transform:translateX(-50%)">233</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">200</b></span>
         <span class="gain"><small>買點1→TP1</small>+20%</span></div>
     </button><button class="card" data-code="6770" type="button">
@@ -601,7 +605,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.9</span></div>
       <div class="c-row"><div class="c-name">力積電</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">記憶體與邏輯晶圓代工</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(6.90% - 6.90% + 4px)"></div><div class="tgt t1" style="left:32.20%"></div><div class="tgt t2" style="left:55.62%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:32.20%;transform:translateX(-50%)">T1 105</span><span class="lbl t r0" style="left:55.62%;transform:translateX(-50%)">T2 130</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 170</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">買 78</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:6.90%" title="超級好買點 78"></div><div class="tgt t1" style="left:32.20%"></div><div class="tgt t2" style="left:55.62%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:32.20%;transform:translateX(-50%)">T1 105</span><span class="lbl t r0" style="left:55.62%;transform:translateX(-50%)">T2 130</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 170</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">78</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">78</b></span>
         <span class="gain"></span></div>
     </button><button class="card" data-code="6488" type="button">
@@ -611,7 +615,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.3</span></div>
       <div class="c-row"><div class="c-name">環球晶</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">全球前三大矽晶圓廠</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(13.63% - 6.90% + 4px)"></div><div class="tgt t1" style="left:37.88%"></div><div class="tgt t2" style="left:67.51%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:37.88%;transform:translateX(-50%)">T1 980</span><span class="lbl t r0" style="left:67.51%;transform:translateX(-50%)">T2 1,200</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 1,390</span><span class="lbl b r0" style="left: 0px; transform: none;">買 750–800</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:13.63%" title="買點1 800"></div><div class="bk l2" style="left:6.90%" title="超級好買點 750"></div><div class="tgt t1" style="left:37.88%"></div><div class="tgt t2" style="left:67.51%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:37.88%;transform:translateX(-50%)">T1 980</span><span class="lbl t r0" style="left:67.51%;transform:translateX(-50%)">T2 1,200</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 1,390</span><span class="lbl b r0" style="left:10.26%;transform:translateX(-50%)">750／800</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">750</b></span>
         <span class="gain"><small>買點1→TP1</small>+23%</span></div>
     </button><button class="card" data-code="7734" type="button">
@@ -621,7 +625,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.3</span></div>
       <div class="c-row"><div class="c-name">印能</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">先進封裝除泡與熱製程設備</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(6.90% - 6.90% + 4px)"></div><div class="tgt t1" style="left:46.92%"></div><div class="tgt t2" style="left:71.55%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:46.92%;transform:translateX(-50%)">T1 4,600</span><span class="lbl t r0" style="left:71.55%;transform:translateX(-50%)">T2 5,400</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 6,100</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">買 3,300</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:6.90%" title="超級好買點 3,300"></div><div class="tgt t1" style="left:46.92%"></div><div class="tgt t2" style="left:71.55%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:46.92%;transform:translateX(-50%)">T1 4,600</span><span class="lbl t r0" style="left:71.55%;transform:translateX(-50%)">T2 5,400</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 6,100</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">3,300</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">3,300</b></span>
         <span class="gain"></span></div>
     </button><button class="card" data-code="3661" type="button">
@@ -631,7 +635,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.4</span></div>
       <div class="c-row"><div class="c-name">世芯-KY</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">雲端 AI ASIC 設計服務</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(11.89% - 6.90% + 4px)"></div><div class="tgt t1" style="left:30.63%"></div><div class="tgt t2" style="left:54.37%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:30.63%;transform:translateX(-50%)">T1 6,500</span><span class="lbl t r0" style="left:54.37%;transform:translateX(-50%)">T2 8,400</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 11,500</span><span class="lbl b r0" style="left:9.40%;transform:translateX(-2px)">買 4,600–5,000</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:11.89%" title="買點1 5,000"></div><div class="bk l2" style="left:6.90%" title="超級好買點 4,600"></div><div class="tgt t1" style="left:30.63%"></div><div class="tgt t2" style="left:54.37%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:30.63%;transform:translateX(-50%)">T1 6,500</span><span class="lbl t r0" style="left:54.37%;transform:translateX(-50%)">T2 8,400</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 11,500</span><span class="lbl b r0" style="left:9.40%;transform:translateX(-2px)">4,600／5,000</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">4,600</b></span>
         <span class="gain"><small>買點1→TP1</small>+30%</span></div>
     </button><button class="card" data-code="6723" type="button">
@@ -641,7 +645,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">未評</span></div>
       <div class="c-row"><div class="c-name">瑞薩</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">車用與工控 MCU 大廠</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(22.57% - 6.90% + 4px)"></div><div class="tgt t1" style="left:65.67%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:65.67%;transform:translateX(-50%)">T1 5,100</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 5,800</span><span class="lbl b r0" style="left: 0px; transform: none;">買 3,600–4,000</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:22.57%" title="買點1 4,000"></div><div class="bk l2" style="left:14.15%" title="買點2 3,785"></div><div class="bk l3" style="left:6.90%" title="超級好買點 3,600"></div><div class="tgt t1" style="left:65.67%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:65.67%;transform:translateX(-50%)">T1 5,100</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 5,800</span><span class="lbl b r0" style="left: 0px; transform: none;">3,600／3,785／4,000</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">3,600</b></span>
         <span class="gain"><small>買點1→TP1</small>+27%</span></div>
     </button><button class="card" data-code="7751" type="button">
@@ -651,7 +655,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.2</span></div>
       <div class="c-row"><div class="c-name">竑騰</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">先進封裝自動化設備</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(11.69% - 6.90% + 4px)"></div><div class="tgt t1" style="left:26.05%"></div><div class="tgt t2" style="left:47.61%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:26.05%;transform:translateX(-50%)">T1 2,000</span><span class="lbl t r0" style="left:47.61%;transform:translateX(-50%)">T2 2,450</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 3,400</span><span class="lbl b r0" style="left:9.29%;transform:translateX(-2px)">買 1,600–1,700</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:11.69%" title="買點1 1,700"></div><div class="bk l2" style="left:6.90%" title="超級好買點 1,600"></div><div class="tgt t1" style="left:26.05%"></div><div class="tgt t2" style="left:47.61%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:26.05%;transform:translateX(-50%)">T1 2,000</span><span class="lbl t r0" style="left:47.61%;transform:translateX(-50%)">T2 2,450</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 3,400</span><span class="lbl b r0" style="left:9.29%;transform:translateX(-2px)">1,600／1,700</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">1,600</b></span>
         <span class="gain"><small>買點1→TP1</small>+18%</span></div>
     </button><button class="card" data-code="2408" type="button">
@@ -661,7 +665,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.3</span></div>
       <div class="c-row"><div class="c-name">南亞科</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">標準型 DRAM 製造</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(18.65% - 6.90% + 4px)"></div><div class="tgt t1" style="left:40.20%"></div><div class="tgt t2" style="left:61.76%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:40.20%;transform:translateX(-50%)">T1 325</span><span class="lbl t r0" style="left:61.76%;transform:translateX(-50%)">T2 380</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 460</span><span class="lbl b r0" style="left:12.77%;transform:translateX(-50%)">買 240–270</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:18.65%" title="買點1 270"></div><div class="bk l2" style="left:13.56%" title="買點2 257"></div><div class="bk l3" style="left:6.90%" title="超級好買點 240"></div><div class="tgt t1" style="left:40.20%"></div><div class="tgt t2" style="left:61.76%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:40.20%;transform:translateX(-50%)">T1 325</span><span class="lbl t r0" style="left:61.76%;transform:translateX(-50%)">T2 380</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 460</span><span class="lbl b r0" style="left:14.44%;transform:translateX(-50%)">240／257／270</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">240</b></span>
         <span class="gain"><small>買點1→TP1</small>+20%</span></div>
     </button><button class="card" data-code="ALAB" type="button">
@@ -671,7 +675,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.9</span></div>
       <div class="c-row"><div class="c-name">Astera Labs</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">PCIe／CXL Retimer 與交換晶片</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(10.44% - 6.90% + 4px)"></div><div class="tgt t1" style="left:57.68%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:57.68%;transform:translateX(-50%)">T1 270</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 330</span><span class="lbl b r0" style="left:8.67%;transform:translateX(-2px)">買 184–190</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:10.44%" title="買點1 190"></div><div class="bk l2" style="left:6.90%" title="超級好買點 184"></div><div class="tgt t1" style="left:57.68%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:57.68%;transform:translateX(-50%)">T1 270</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 330</span><span class="lbl b r0" style="left:8.67%;transform:translateX(-2px)">184／190</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">184</b></span>
         <span class="gain"><small>買點1→TP1</small>+42%</span></div>
     </button><button class="card" data-code="NBIS" type="button">
@@ -681,7 +685,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score hi" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">9.3</span></div>
       <div class="c-row"><div class="c-name">Nebius</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">GPU 雲端服務</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(14.73% - 6.90% + 4px)"></div><div class="tgt t1" style="left:42.72%"></div><div class="tgt t2" style="left:70.71%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:42.72%;transform:translateX(-50%)">T1 190</span><span class="lbl t r0" style="left:70.71%;transform:translateX(-50%)">T2 240</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 280</span><span class="lbl b r0" style="left: 0px; transform: none;">買 126–140</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:14.73%" title="買點1 140"></div><div class="bk l2" style="left:6.90%" title="超級好買點 126"></div><div class="tgt t1" style="left:42.72%"></div><div class="tgt t2" style="left:70.71%"></div><div class="tgt t3" style="left:93.10%"></div><span class="lbl t r0" style="left:42.72%;transform:translateX(-50%)">T1 190</span><span class="lbl t r0" style="left:70.71%;transform:translateX(-50%)">T2 240</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T3 280</span><span class="lbl b r0" style="left:10.82%;transform:translateX(-50%)">126／140</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">126</b></span>
         <span class="gain"><small>買點1→TP1</small>+36%</span></div>
     </button><button class="card" data-code="285A" type="button">
@@ -691,7 +695,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.8</span></div>
       <div class="c-row"><div class="c-name">Kioxia</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">NAND Flash 大廠</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(16.75% - 6.90% + 4px)"></div><div class="tgt t1" style="left:61.08%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:61.08%;transform:translateX(-50%)">T1 30,500</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 37,000</span><span class="lbl b r0" style="left: 0px; transform: none;">買 19,500–21,500</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:16.75%" title="買點1 21,500"></div><div class="bk l2" style="left:11.82%" title="買點2 20,500"></div><div class="bk l3" style="left:6.90%" title="超級好買點 19,500"></div><div class="tgt t1" style="left:61.08%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:61.08%;transform:translateX(-50%)">T1 30,500</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 37,000</span><span class="lbl b r0" style="left: 0px; transform: none;">19,500／20,500／21,500</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">19,500</b></span>
         <span class="gain"><small>買點1→TP1</small>+42%</span></div>
     </button><button class="card" data-code="3110" type="button">
@@ -701,7 +705,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score mid" title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">8.9</span></div>
       <div class="c-row"><div class="c-name">日東紡</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">高階玻纖布（T-glass）</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(20.12% - 6.90% + 4px)"></div><div class="tgt t1" style="left:70.30%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:70.30%;transform:translateX(-50%)">T1 33,000</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 38,000</span><span class="lbl b r0" style="left: 0px; transform: none;">買 19,100–22,000</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:20.12%" title="買點1 22,000"></div><div class="bk l2" style="left:14.65%" title="買點2 20,800"></div><div class="bk l3" style="left:6.90%" title="超級好買點 19,100"></div><div class="tgt t1" style="left:70.30%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:70.30%;transform:translateX(-50%)">T1 33,000</span><span class="lbl t r1" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 38,000</span><span class="lbl b r0" style="left: 0px; transform: none;">19,100／20,800／22,000</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">19,100</b></span>
         <span class="gain"><small>買點1→TP1</small>+50%</span></div>
     </button><button class="card" data-code="AAOI" type="button">
@@ -721,7 +725,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">未評</span></div>
       <div class="c-row"><div class="c-name">Sandisk</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">NAND Flash 與 SSD</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(21.44% - 6.90% + 4px)"></div><div class="tgt t1" style="left:66.16%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:66.16%;transform:translateX(-50%)">T1 300</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 350</span><span class="lbl b r0" style="left:14.17%;transform:translateX(-50%)">買 190–217</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:21.44%" title="買點1 217"></div><div class="bk l2" style="left:6.90%" title="超級好買點 190"></div><div class="tgt t1" style="left:66.16%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:66.16%;transform:translateX(-50%)">T1 300</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 350</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">190</span><span class="lbl b r0" style="left:21.44%;transform:translateX(-50%)">217</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">190</b></span>
         <span class="gain"><small>買點1→TP1</small>+38%</span></div>
     </button><button class="card" data-code="LITE" type="button">
@@ -731,7 +735,7 @@ button,input,select{font:inherit;color:inherit}
         <span class="score " title="評分（試算表「前三項平均」，沒有就用已填的分數平均）">未評</span></div>
       <div class="c-row"><div class="c-name">Lumentum</div><span class="c-quote"><span class="wait">等待行情</span></span></div>
       <div class="c-tagrow"><div class="c-tag">光通訊雷射與光模組</div></div>
-      <div class="ladder"><div class="rail"></div><div class="buy" style="left:6.90%;width:calc(20.51% - 6.90% + 4px)"></div><div class="tgt t1" style="left:47.73%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:47.73%;transform:translateX(-50%)">T1 330</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 380</span><span class="lbl b r0" style="left:13.70%;transform:translateX(-50%)">買 285–300</span></div>
+      <div class="ladder"><div class="rail"></div><div class="bk l1" style="left:20.51%" title="買點1 300"></div><div class="bk l2" style="left:6.90%" title="買點2 285"></div><div class="tgt t1" style="left:47.73%"></div><div class="tgt t2" style="left:93.10%"></div><span class="lbl t r0" style="left:47.73%;transform:translateX(-50%)">T1 330</span><span class="lbl t r0" style="left:93.10%;transform:translateX(calc(-100% + 3px))">T2 380</span><span class="lbl b r0" style="left:6.90%;transform:translateX(-2px)">285</span><span class="lbl b r0" style="left:20.51%;transform:translateX(-50%)">300</span></div>
       <div class="c-foot"><span>最佳買點 <b class="best">285</b></span>
         <span class="gain"><small>買點1→TP1</small>+10%</span></div>
     </button></main>
@@ -802,7 +806,9 @@ function ladder(r, big, now){
       h += `<span class="lbl t ix r${row}" style="left:${pos.toFixed(2)}%;transform:${tf}">${it.text}</span>`; });
     return h + `</div>`;
   }
-  if(buys.length){ const a=Math.min(...buys), b=Math.max(...buys); h += `<div class="buy" style="left:${x(a)};width:calc(${x(b)} - ${x(a)} + 4px)"></div>`; }
+  // 買點：買點1、買點2、超級好買點各畫一條（同價位只畫一次）
+  const BK = [["b1","買1"],["b2","買2"],["sb","超好"]].filter(([k])=>isNum(r[k])).filter(([k],i,arr)=>arr.findIndex(([k2])=>r[k2]===r[k])===i);
+  BK.forEach(([k],i)=>{ h += `<div class="bk l${i+1}" style="left:${x(r[k])}" title="${k==="sb"?"超級好買點":k==="b1"?"買點1":"買點2"} ${fmt(r[k])}"></div>`; });
   ["t1","t2","t3"].forEach((k,i)=>{ if(isNum(r[k])) h += `<div class="tgt t${i+1}" style="left:${x(r[k])}"></div>`; });
   if(isNum(now)) h += `<div class="now" style="left:${x(now)}" title="現價 ${fmt(now)}"></div>`;
   // 標籤：重疊時自動換到第二排，靠邊的往內縮
@@ -813,9 +819,12 @@ function ladder(r, big, now){
     const tf = pos<10 ? "translateX(-2px)" : pos>90 ? "translateX(calc(-100% + 3px))" : "translateX(-50%)";
     h += `<span class="lbl ${cls} r${row}" style="left:${pos.toFixed(2)}%;transform:${tf}">${it.text}</span>`; }); };
   place(["t1","t2","t3"].filter(k=>isNum(r[k])).map(k=>({v:r[k],text:k.toUpperCase().replace("T","T")+" "+fmt(r[k])})), "t");
-  if(buys.length){ const a=Math.min(...buys), b=Math.max(...buys);
-    place([{v:(a+b)/2, text: b!==a ? `買 ${fmt(a)}–${fmt(b)}` : `買 ${fmt(a)}`}], "b");
-  }
+  // 太靠近的買點合併成一個標籤，避免文字疊在一起
+  const bl = BK.map(([k,lab])=>({v:r[k], text: big ? `${lab} ${fmt(r[k])}` : fmt(r[k])})).sort((a,b)=>a.v-b.v), merged = [];
+  for(const it of bl){ const last = merged[merged.length-1];
+    if(last && (pct(it.v) - pct(last.v)) < (last.text.length + it.text.length) * cw / 2 + 2){ last.text = last.text + "／" + it.text; last.v = (last.v + it.v) / 2; }
+    else merged.push({...it}); }
+  place(merged, "b");
   return h + `</div>`;
 }
 
@@ -827,14 +836,16 @@ function fixLabels(root){
     labs.forEach(el => { const r = el.getBoundingClientRect();
       if(r.left < lr.left){ el.style.left = "0"; el.style.transform = "none"; }
       else if(r.right > lr.right){ el.style.left = "auto"; el.style.right = "0"; el.style.transform = "none"; } });
-    const tops = labs.filter(el => el.classList.contains("t"));
-    tops.forEach(el => { el.classList.remove("r1"); el.classList.add("r0"); });
-    const ends = [-1e9, -1e9];
-    tops.map(el => ({el, r: el.getBoundingClientRect()})).sort((a,b) => a.r.left - b.r.left).forEach(({el, r}) => {
-      const row = r.left > ends[0] + 4 ? 0 : 1;
-      if(row){ el.classList.remove("r0"); el.classList.add("r1"); }
-      ends[row] = Math.max(ends[row], r.right);
-    });
+    for(const cls of ["t","b"]){
+      const grp = labs.filter(el => el.classList.contains(cls));
+      grp.forEach(el => { el.classList.remove("r1"); el.classList.add("r0"); });
+      const ends = [-1e9, -1e9];
+      grp.map(el => ({el, r: el.getBoundingClientRect()})).sort((a,b) => a.r.left - b.r.left).forEach(({el, r}) => {
+        const row = r.left > ends[0] + 4 ? 0 : 1;
+        if(row){ el.classList.remove("r0"); el.classList.add("r1"); }
+        ends[row] = Math.max(ends[row], r.right);
+      });
+    }
   });
 }
 let rzT; addEventListener("resize", () => { clearTimeout(rzT); rzT = setTimeout(() => { fixLabels(document); }, 150); });
