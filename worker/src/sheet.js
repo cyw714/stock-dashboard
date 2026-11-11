@@ -1,7 +1,9 @@
 // sheet.js — 讀取 Google 試算表的標的清單，轉成程式好用的格式
 //
-// 資料流程：Google 試算表（國內、國外分頁）→ 下載成 CSV → 這支程式解析 → 一份統一的「標的清單」
+// 資料流程：Google 試算表（國內、國外分頁）→ 下載成 Excel 檔 → 這支程式解析 → 一份統一的「標的清單」
 // 網站和 LINE 通知都用同一份清單，所以只要改試算表，兩邊都會跟著變。
+
+import { readXlsx, isSeparator } from './xlsx.js';
 
 export const SHEET_ID = '1OdeqbHAtR8F-0Hu2zYFHeIck8Xzj7cXeEuRVWgL7M1A';
 
@@ -81,12 +83,14 @@ const num = v => {
 
 // ---------- 3. 國內分頁 ----------
 // 欄位：A 代號、B 備註、C 買點1、D 買點2、E 超級好買點、F~H TP1~3、I 市值、J~L 評分
-// 分組：「今日及時標的」那列之後是「重點觀察」；A 欄寫「其他追蹤」的那列之後是「其他追蹤」
-export function parseDomestic(rows, foreignCodes = new Set()) {
+// 分組：灰色分隔列以上是「重點觀察」，以下是「其他追蹤」（fills 是每列 A 欄的底色）
+export function parseDomestic(rows, foreignCodes = new Set(), fills = []) {
   const out = [], seen = new Set();
   let group = '重點觀察';
-  for (const r of rows.slice(1)) {
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i] || [];
     const a = (r[0] || '').trim();
+    if (isSeparator(r, fills[i])) { group = '其他追蹤'; continue; }
     if (!a) continue;                                   // 空白列：排版用，跳過
     if (a.includes('今日') || a.includes('重點')) { group = '重點觀察'; continue; }
     if (a.includes('其他追蹤')) { group = '其他追蹤'; continue; }
@@ -156,16 +160,18 @@ export function zoneOf(item, price) {
 }
 
 // ---------- 6. 從 Google 下載 ----------
-// gid 是分頁的編號（網址裡 #gid= 後面那串數字）
-export async function fetchSheet(gid) {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
+// 下載整份試算表（Excel 格式），一次拿到所有分頁和底色
+export async function loadWatchlist() {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=xlsx`;
   const res = await fetch(url, { redirect: 'follow' });
-  if (!res.ok) throw new Error(`讀取試算表失敗（gid=${gid}）：HTTP ${res.status}`);
-  return parseCSV(await res.text());
+  if (!res.ok) throw new Error(`讀取試算表失敗：HTTP ${res.status}`);
+  return parseWorkbook(new Uint8Array(await res.arrayBuffer()));
 }
 
-export async function loadWatchlist({ domesticGid, foreignGid }) {
-  const [dom, fgn] = await Promise.all([fetchSheet(domesticGid), fetchSheet(foreignGid)]);
-  const foreign = parseForeign(fgn);
-  return [...parseDomestic(dom, new Set(foreign.map(x => x.code))), ...foreign];
+export function parseWorkbook(bytes) {
+  const book = readXlsx(bytes);
+  if (!book['國內'] || !book['國外']) throw new Error('找不到「國內」或「國外」分頁，分頁名稱是不是被改了？');
+  const foreign = parseForeign(book['國外'].rows);
+  const domestic = parseDomestic(book['國內'].rows, new Set(foreign.map(x => x.code)), book['國內'].fills);
+  return [...domestic, ...foreign];
 }

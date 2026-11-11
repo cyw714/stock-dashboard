@@ -1,0 +1,11 @@
+{
+  "name": "stockie-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node test/xlsx.test.mjs"
+  },
+  "dependencies": {
+    "fflate": "^0.8.2"
+  }
+}
