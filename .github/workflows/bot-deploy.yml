@@ -104,3 +104,18 @@ jobs:
           upsert stockie-watchdog "*/5 8-14 * * 1-5"   /cron/watchdog "看門狗：每 5 分鐘檢查有沒有漏發"
           echo "### ✅ 部署完成" >> $GITHUB_STEP_SUMMARY
           echo "LINE Webhook 網址（正式切換時才要填）：\`$URL/line/webhook\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: 測試發送（commit 訊息裡有 [測試晨報] 或 [測試到價] 時才會跑）
+        if: contains(github.event.head_commit.message, '[測試晨報]') || contains(github.event.head_commit.message, '[測試到價]')
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          MSG: ${{ github.event.head_commit.message }}
+        run: |
+          URL=$(gcloud run services describe $SERVICE --region $REGION --format='value(status.url)')
+          for KIND in morning alert; do
+            TAG=$([ $KIND = morning ] && echo '[測試晨報]' || echo '[測試到價]')
+            case "$MSG" in *"$TAG"*) ;; *) continue ;; esac
+            RESULT=$(curl -sS -X POST -H "X-Cron-Secret: $CRON_SECRET" "$URL/cron/$KIND?force=1")
+            echo "$KIND 結果：$RESULT"
+            echo "- $KIND：\`$RESULT\`" >> $GITHUB_STEP_SUMMARY
+          done
