@@ -138,7 +138,8 @@ async function infoJson() {
 async function hedgeInfo(items, index) {
   const x = items.find(i => i.code === 'TAIEX');
   const idx = index?.price ?? index?.prev;
-  if (!x || !idx) return null;
+  if (!idx) return null;
+  if (!x) return { index: idx, levels: [], g: null, signals: null };
   const alloc = String(x.note ?? '').split(/[,，、]/).map(s => s.trim()).filter(Boolean);
   const levels = [x.buy.b1, x.buy.b2, x.buy.sb].map((L, i) => L?.lo ? { raw: L.raw, lo: L.lo, alloc: alloc[i] } : null).filter(Boolean)
     .sort((a, b) => a.lo - b.lo)

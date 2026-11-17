@@ -84,8 +84,9 @@ export function morningMessage({ dateLabel, intl, counts, notes, alertTimes, dif
       text(t, { size: 'xxs', color: ZONE[z].fg, align: 'center' }),
     ], { backgroundColor: ZONE[z].bg, cornerRadius: '8px', paddingAll: '6px' })), { spacing: 'sm' }),
   ];
-  if (hedge?.levels.length) {
+  if (hedge) {
     body.push(sep(), label(`大盤避險（加權 ${fmtPrice(hedge.index)}）`));
+    if (!hedge.levels.length) body.push(text('試算表目前沒有填避險加碼點', { size: 'xs', color: C.muted }));
     if (hedge.g != null || hedge.signals) {
       body.push(box('horizontal', [
         ...(hedge.g != null ? [box('vertical', [
