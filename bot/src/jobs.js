@@ -42,7 +42,7 @@ export function annotate(items, prices, { usePrev = false } = {}) {
   return items.map(x => {
     const q = prices[x.code];
     const price = q ? (usePrev ? q.prev : (q.price ?? q.prev)) : null;
-    const zone = zoneOf(x, price);
+    const zone = x.code === 'TAIEX' ? null : zoneOf(x, price);   // 大盤是避險加碼點，不算到價
     return { ...x, name: x.name ?? q?.name ?? null, price, pct: usePrev ? null : q?.pct ?? null, prev: q?.prev ?? null, zone, ref: zone ? levelText(x, zone) : '' };
   });
 }

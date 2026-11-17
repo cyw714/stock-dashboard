@@ -233,7 +233,7 @@ function filtered() {
   const q = S.q.trim().toLowerCase();
   let list = D.items.filter(x =>
     (S.cat === '全部' || x.group === S.cat) && (S.mk === '全部' || x.market === S.mk) &&
-    (S.st === '全部' || (S.st === '到買點' ? isBuy(x.zone) : x.zone && !isBuy(x.zone))) &&
+    (S.st === '全部' || (x.code !== 'TAIEX' && (S.st === '到買點' ? isBuy(x.zone) : x.zone && !isBuy(x.zone)))) &&
     (!q || [x.code, x.name, D.prof[x.code]?.name, D.prof[x.code]?.tag, ...(D.prof[x.code]?.ai || [])].join(' ').toLowerCase().includes(q)));
   const gain = x => x.tp.tp1?.lo && x.price ? x.tp.tp1.lo / x.price - 1 : -Infinity;
   const dist = x => buyHi(x) && x.price ? x.price / buyHi(x) - 1 : Infinity;
@@ -262,7 +262,23 @@ function probOf(x, L, T) {
   return hitP(x.price, L, md.prob.mu, md.prob.sigma, T);
 }
 
+// 大盤：不是買賣標的，而是「避險加碼點」，用專屬的卡片顯示
+const HEDGE_URL = 'https://hdg-80yyy10t.pages.dev/';
+function hedgeCard(x) {
+  const alloc = String(x.note || '').split(/[,，、]/).map(s => s.trim()).filter(Boolean);
+  const lv = [x.buy.b1, x.buy.b2, x.buy.sb].map((L, i) => L ? { L, a: alloc[i] } : null).filter(Boolean);
+  return `<a class="card focus" href="${HEDGE_URL}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">
+    <div class="c-head"><span class="code">TAIEX</span><span class="pill">指數</span><span class="pill focus">大盤避險</span></div>
+    <div class="c-name"><b>加權指數</b><span class="px">${x.price ? x.price.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '—'} <span class="${cls(x.pct)}" style="font-size:12px">${fpc(x.pct)}</span></span></div>
+    <div class="c-tag">避險加碼點與配置比例</div>
+    <table class="t" style="font-size:13px"><tr><th>加碼點</th><th class="r">配置</th><th class="r">距現在</th></tr>
+      ${lv.map(({ L, a }) => `<tr><td class="mono">${esc(L.raw)}</td><td class="r">${esc(a || '—')}</td><td class="r">${x.price ? `${((L.lo / x.price - 1) * 100) > 0 ? '+' : ''}${((L.lo / x.price - 1) * 100).toFixed(1)}%` : '—'}</td></tr>`).join('')}</table>
+    <div class="c-foot"><span>開啟避險儀表板 →</span></div>
+  </a>`;
+}
+
 function card(x) {
+  if (x.code === 'TAIEX') return hedgeCard(x);
   const p = D.prof[x.code] || {}, md = D.model[x.code];
   const z = x.zone, kind = z ? (isBuy(z) ? 'buy' : 'tp') : '';
   const best = bestBuy(x);
