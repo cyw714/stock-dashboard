@@ -106,6 +106,15 @@ jobs:
           echo "### ✅ 部署完成" >> $GITHUB_STEP_SUMMARY
           echo "LINE Webhook 網址（正式切換時才要填）：\`$URL/line/webhook\`" >> $GITHUB_STEP_SUMMARY
 
+      - name: 檢查網站資料和預覽頁
+        run: |
+          URL=$(gcloud run services describe $SERVICE --region $REGION --format='value(status.url)')
+          curl -sS "$URL/api/watchlist" -o /tmp/w.json
+          jq -r '"更新時間：\(.updated)", "加權：\(.market.index.price)  台指期：\(.market.txf.price)  那指：\(.market.nasdaq.price)  費半：\(.market.sox.price)", "清單 \(.items|length) 檔，有價格 \([.items[]|select(.price!=null)]|length) 檔，在區間內 \([.items[]|select(.zone!=null)]|length) 檔", "沒有價格：\([.items[]|select(.price==null)|.code]|join("、"))"' /tmp/w.json | tee -a $GITHUB_STEP_SUMMARY
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" "$URL/preview")
+          echo "預覽頁：$URL/preview（HTTP $CODE）" | tee -a $GITHUB_STEP_SUMMARY
+          [ "$CODE" = "200" ]
+
       - name: 測試發送（commit 訊息裡有 [測試晨報] 或 [測試到價] 時才會跑）
         if: contains(github.event.head_commit.message, '[測試晨報]') || contains(github.event.head_commit.message, '[測試到價]')
         env:
