@@ -13,6 +13,7 @@ export const ZONE = {
   sb: { label: '超級好買點', bg: '#8EC3A6', fg: '#1F2A24', rank: 3 },
   b2: { label: '買點2', bg: '#354740', fg: '#8EC3A6', rank: 2 },
   b1: { label: '買點1', bg: '#354740', fg: '#8EC3A6', rank: 1 },
+  bx: { label: '圖上支撐區', bg: '#354740', fg: '#8EC3A6', rank: 0.5 },
   tp1: { label: 'TP1', bg: '#4A3A3C', fg: '#E39EA3', rank: 1 },
   tp2: { label: 'TP2', bg: '#4A3A3C', fg: '#E39EA3', rank: 2 },
   tp3: { label: 'TP3', bg: '#4A3A3C', fg: '#E39EA3', rank: 3 },

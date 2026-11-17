@@ -23,7 +23,7 @@ export const SLOTS = {
   a1300: { at: 13 * 60, label: '13:00 到價整理', nth: 3, next: null },
 };
 const ALERT_TIMES = ['10:30', '11:30', '13:00'];
-const BUY = ['b1', 'b2', 'sb'], TP = ['tp1', 'tp2', 'tp3'];
+const BUY = ['bx', 'b1', 'b2', 'sb'], TP = ['tp1', 'tp2', 'tp3'];
 
 // ---------- 共用：讀清單、配上價格、判斷區間 ----------
 let wlCache = { at: 0, items: null };
@@ -34,14 +34,20 @@ export async function watchlist() {
   try {
     const r = await fetch('https://raw.githubusercontent.com/cyw714/stock-dashboard/main/annotations.json');
     const ann = r.ok ? (await r.json()).stocks ?? {} : {};
-    for (const x of items) if (ann[x.code] && (!x.note || /見.?圖/.test(x.note))) x.note = ann[x.code].text;
+    for (const x of items) {
+      const a = ann[x.code];
+      if (!a) continue;
+      if (!x.note || /見.?圖/.test(x.note)) x.note = a.text;
+      // 圖上的支撐區也當成一個買點區間，跌進上緣就會出現在到價整理
+      if (Array.isArray(a.zone)) x.buy.bx = { raw: `${a.zone[0]}–${a.zone[1]}`, lo: Math.min(...a.zone), hi: Math.max(...a.zone) };
+    }
   } catch { /* 沒有也沒關係 */ }
   wlCache = { at: Date.now(), items };
   return wlCache.items;
 }
 
 const levelText = (item, z) => {
-  const L = { sb: ['超買', item.buy.sb], b2: ['買2', item.buy.b2], b1: ['買1', item.buy.b1], tp1: ['TP1', item.tp.tp1], tp2: ['TP2', item.tp.tp2], tp3: ['TP3', item.tp.tp3] }[z];
+  const L = { bx: ['圖上支撐', item.buy.bx], sb: ['超買', item.buy.sb], b2: ['買2', item.buy.b2], b1: ['買1', item.buy.b1], tp1: ['TP1', item.tp.tp1], tp2: ['TP2', item.tp.tp2], tp3: ['TP3', item.tp.tp3] }[z];
   return L && L[1] ? `${L[0]} ${L[1].raw}` : '';
 };
 
@@ -58,7 +64,7 @@ export function annotate(items, prices, { usePrev = false } = {}) {
 export function countZones(rows) {
   return {
     sb: rows.filter(r => r.zone === 'sb').length,
-    b: rows.filter(r => r.zone === 'b1' || r.zone === 'b2').length,
+    b: rows.filter(r => r.zone === 'b1' || r.zone === 'b2' || r.zone === 'bx').length,
     tp: rows.filter(r => TP.includes(r.zone)).length,
   };
 }
@@ -305,7 +311,7 @@ export async function buildList() {
     total: rows.length,
     groups: [
       { zone: 'tp1', items: rows.filter(r => TP.includes(r.zone)) },
-      { zone: 'b1', items: [...by('b2'), ...by('b1')] },
+      { zone: 'b1', items: [...by('b2'), ...by('b1'), ...by('bx')] },
       { zone: 'sb', items: by('sb') },
     ],
   });

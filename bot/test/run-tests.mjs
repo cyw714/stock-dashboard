@@ -43,6 +43,12 @@ assert.deepEqual(countZones(rows), { sb: 1, b: 2, tp: 0 });
 const again = findNew(rows, Object.fromEntries(rows.map(r => [r.code, r.zone])));
 assert.equal(again.newBuy.length + again.newTp.length, 0);
 
+// 3b. 圖上支撐區：比買點1 高的區間也算進區
+const tl = { code: 'T', buy: { b1: parseLevel('1500'), b2: null, sb: parseLevel('1250-1300'), bx: { raw: '1250–1550', lo: 1250, hi: 1550 } }, tp: { tp1: parseLevel('1800') } };
+assert.equal(zoneOf(tl, 1520), 'bx');
+assert.equal(zoneOf(tl, 1600), null);
+assert.equal(zoneOf(tl, 1450), 'b1');
+
 // 4. 訊息格式（LINE 限制：altText ≤ 400 字、一張卡片 ≤ 30KB）
 const msgs = [
   M.alertMessage({ clock: '10:30', nth: 1, newBuy, newTp, stillCount: still, nextTime: '11:30' }),

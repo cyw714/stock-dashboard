@@ -181,8 +181,8 @@ const fpc = p => p == null ? '—' : `${p > 0 ? '+' : p < 0 ? '−' : ''}${Math.
 const cls = p => p > 0 ? 'up' : p < 0 ? 'down' : 'muted';
 const N = x => 0.5 * (1 + erf(x / Math.SQRT2));
 function erf(x) { const s = Math.sign(x); x = Math.abs(x); const t = 1 / (1 + 0.3275911 * x); return s * (1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x)); }
-const ZL = { sb: '超級好買點', b2: '買點2', b1: '買點1', tp1: '到 TP1', tp2: '到 TP2', tp3: '到 TP3' };
-const isBuy = z => z === 'sb' || z === 'b1' || z === 'b2';
+const ZL = { sb: '超級好買點', b2: '買點2', b1: '買點1', bx: '圖上支撐區', tp1: '到 TP1', tp2: '到 TP2', tp3: '到 TP3' };
+const isBuy = z => z === 'sb' || z === 'b1' || z === 'b2' || z === 'bx';
 const buyHi = it => [it.buy.b1, it.buy.b2, it.buy.sb].find(L => L && L.hi != null)?.hi ?? null;
 const bestBuy = it => it.buy.sb || it.buy.b2 || it.buy.b1;
 

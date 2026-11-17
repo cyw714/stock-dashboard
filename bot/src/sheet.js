@@ -156,6 +156,7 @@ export function zoneOf(item, price) {
   if (below(sb)) return 'sb';
   if (below(b2)) return 'b2';
   if (below(b1)) return 'b1';
+  if (below(item.buy.bx)) return 'bx';   // 試算表圖片上的支撐區（annotations.json）
   return null;
 }
 
