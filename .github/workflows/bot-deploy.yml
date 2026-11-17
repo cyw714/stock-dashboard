@@ -102,7 +102,8 @@ jobs:
           upsert stockie-morning  "0 8 * * 1-5"        /cron/morning  "08:00 盤前晨報"
           upsert stockie-alert-am "30 10,11 * * 1-5"   /cron/alert    "10:30、11:30 到價整理"
           upsert stockie-alert-pm "0 13 * * 1-5"       /cron/alert    "13:00 到價整理"
-          upsert stockie-watchdog "*/5 8-14 * * 1-5"   /cron/watchdog "看門狗：每 5 分鐘檢查有沒有漏發"
+          upsert stockie-watchdog "*/5 8-14 * * 1-5"   /cron/watchdog "看門狗：每 5 分鐘檢查有沒有漏發，順便檢查自訂提醒"
+          upsert stockie-weekly   "0 20 * * 0"         /cron/weekly   "每週回顧（週日 20:00）"
           echo "### ✅ 部署完成" >> $GITHUB_STEP_SUMMARY
           echo "LINE Webhook 網址（正式切換時才要填）：\`$URL/line/webhook\`" >> $GITHUB_STEP_SUMMARY
 

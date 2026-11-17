@@ -14,6 +14,7 @@ import * as line from './line.js';
 import * as store from './store.js';
 import * as M from './messages.js';
 import { tpeDate, tpeLabel, tpeClock, tpeMinutes, tpeNow } from './time.js';
+import * as F from './features.js';
 
 export const SLOTS = {
   morning: { at: 8 * 60, label: '08:00 晨報' },
@@ -134,7 +135,7 @@ async function infoJson() {
 }
 
 // ---------- 盤前晨報 ----------
-export async function buildMorning() {
+export async function buildMorning({ save = false } = {}) {
   const items = await watchlist();
   const tw = items.filter(x => x.market === '台股').map(x => x.code);
   const [t, intl, txf, info] = await Promise.all([twQuotes(tw), yahooQuotes(['^IXIC', '^SOX']), txfQuote(), infoJson()]);
@@ -149,7 +150,10 @@ export async function buildMorning() {
       .map(e => `${e.date.slice(5).replace('-', '/')} ${e.name ?? nameOf(e.code)} 除${e.kind ?? '息'}${e.cash ? ` ${e.cash} 元` : ''}`),
     ...(info.news ?? []).filter(n => n.date >= yesterday).slice(0, 3).map(n => `${n.name}：${n.title}`),
   ];
+  const names = Object.fromEntries(Object.entries(t.stocks).map(([c, q]) => [c, q.name]));
+  const diffs = await F.sheetDiff(items, names, { save }).catch(e => { console.warn('試算表異動比對失敗：', e.message); return null; });
   return M.morningMessage({
+    diffs,
     dateLabel: tpeLabel(),
     intl: [
       { label: '那斯達克', ...intl['^IXIC'] },
@@ -165,7 +169,7 @@ export async function buildMorning() {
 export async function runMorning({ force = false } = {}) {
   if (!force && await isHoliday()) { await record('morning', 'skipped', { reason: '休市' }); return { skipped: '休市' }; }
   if (!(await quotaOk('morning'))) throw new Error('LINE 額度不足');
-  const msg = await buildMorning();
+  const msg = await buildMorning({ save: !force });
   await line.send(msg);
   if (!force) await record('morning', 'ok');
   return { ok: true };
@@ -201,6 +205,7 @@ export async function runAlert(slot, { force = false } = {}) {
     await line.send(msg);
   }
   if (force) return { ok: true, test: true, newBuy: newBuy.length, newTp: newTp.length };  // 測試：不寫入紀錄
+  await F.logEvents([...newBuy, ...newTp]).catch(e => console.warn('到價紀錄失敗：', e.message));
   await store.set(`zones/${today}`, { zones });
   await store.set('cache/lastAlert', { message: msg, at: new Date().toISOString(), slot });
   await record(slot, 'ok', { newBuy: newBuy.length, newTp: newTp.length, sent: !(empty && skipEmpty) });
@@ -251,7 +256,21 @@ export async function watchdog() {
       report.push({ slot, retried: true, ok: false, error: e.message });
     }
   }
+  try {
+    const fired = await F.checkCustom(await watchlist());
+    if (fired.length) report.push({ custom: fired });
+  } catch (e) { console.warn('自訂提醒檢查失敗：', e.message); }
   return report;
+}
+
+// ---------- 每週回顧（週日 20:00，只私訊你；其他人可以打「回顧」查看） ----------
+export async function runWeekly({ force = false } = {}) {
+  const id = `runs/${tpeDate()}_weekly`;
+  if (!force && (await store.get(id))?.status === 'ok') return { already: 'ok' };
+  const msg = await F.weeklyReview(await watchlist());
+  await line.pushTo(process.env.LINE_ADMIN_USER_ID, msg);
+  if (!force) await store.set(id, { status: 'ok', at: new Date().toISOString() });
+  return { ok: true };
 }
 
 // ---------- 選單按鈕的回覆（回覆不算 LINE 訊息則數） ----------
@@ -295,15 +314,48 @@ const ACTIONS = {
   alert: async () => (await store.get('cache/lastAlert'))?.message ?? M.textMessage('今天還沒有到價整理，第一次是 10:30。'),
   close: buildClose,
   events: buildEvents,
+  diff: F.lastDiff,
+  review: async () => F.weeklyReview(await watchlist()),
 };
-const KEYWORDS = [[/晨報/, 'morning'], [/到價列表|列表/, 'list'], [/到價整理|整理/, 'alert'], [/收盤/, 'close'], [/事件|日曆|除息/, 'events']];
+const KEYWORDS = [[/晨報/, 'morning'], [/到價列表|列表/, 'list'], [/到價整理|整理/, 'alert'], [/收盤/, 'close'], [/事件|日曆|除息/, 'events'], [/異動/, 'diff'], [/回顧/, 'review']];
+const HELP = '可以這樣用：\n• 打代號或名稱（例如 3037、欣興）→ 查股小卡\n• 提醒 3037 700 → 碰到 700 通知你\n• 我的提醒／取消提醒 3037\n• 晨報、到價列表、到價整理、收盤、事件、異動、回顧';
+
+// 打字的指令：提醒、查股
+async function textCommand(ev) {
+  const msg = ev.message.text.trim(), uid = ev.source?.userId;
+  let m;
+  if ((m = msg.match(/^提醒\s*(\S+)\s+([\d.,]+)$/))) return M.textMessage(await F.addCustom(uid, await watchlist(), m[1], m[2]));
+  if ((m = msg.match(/^取消提醒\s*(\S+)$/))) return M.textMessage(await F.cancelCustom(uid, await watchlist(), m[1]));
+  if (/^(我的提醒|提醒清單|提醒列表)$/.test(msg)) return M.textMessage(await F.listCustom(uid));
+  if (/^(說明|help|指令|\?)$/i.test(msg)) return M.textMessage(HELP);
+  const kw = KEYWORDS.find(([re]) => re.test(msg))?.[1];
+  if (kw) return ACTIONS[kw]();
+  // 查股：代號或名稱
+  const items = await watchlist();
+  const hit = F.findItem(items, msg);
+  if (hit || /^\d{4,6}[A-Z]?$/.test(msg)) {
+    const rows = hit ? annotate([hit], (await quotesFor([hit])).prices) : [];
+    return F.lookup(rows, msg);
+  }
+  return null;
+}
 
 export async function handleEvent(ev) {
   let action = null;
   if (ev.type === 'postback') action = new URLSearchParams(ev.postback.data).get('action');
-  else if (ev.type === 'message' && ev.message.type === 'text') action = KEYWORDS.find(([re]) => re.test(ev.message.text))?.[1] ?? null;
+  else if (ev.type === 'message' && ev.message.type === 'text') {
+    if (!ev.replyToken) return;
+    try {
+      const out = await textCommand(ev);
+      if (out) await line.reply(ev.replyToken, out);
+    } catch (e) {
+      console.error('文字指令失敗：', e);
+      await line.reply(ev.replyToken, M.textMessage('暫時查不到，請稍後再試一次。')).catch(() => {});
+    }
+    return;
+  }
   else if (ev.type === 'follow') {
-    return line.reply(ev.replyToken, M.textMessage('歡迎加入 stockie！每個交易日 08:00 發盤前晨報，10:30、11:30、13:00 整理到價的股票。下方選單隨時可以查即時到價。'));
+    return line.reply(ev.replyToken, M.textMessage('歡迎加入 stockie！每個交易日 08:00 發盤前晨報，10:30、11:30、13:00 整理到價的股票。下方選單隨時可以查即時到價，也可以直接打股票代號查詢、打「提醒 3037 700」設定價格提醒。'));
   }
   if (!action || !ACTIONS[action] || !ev.replyToken) return;
   try {

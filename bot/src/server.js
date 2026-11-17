@@ -56,6 +56,7 @@ const server = createServer(async (req, res) => {
       let slot = path.slice('/cron/'.length);
       const force = url.searchParams.get('force') === '1';   // 手動測試：不管休市、不管是否發過
       if (slot === 'watchdog') return json(res, 200, { report: await jobs.watchdog() });
+      if (slot === 'weekly') return json(res, 200, await jobs.runWeekly({ force }));
       if (slot === 'alert') slot = force ? (jobs.currentAlertSlot() ?? 'a1030') : jobs.currentAlertSlot();
       if (!slot) return json(res, 200, { skipped: '現在不是到價整理的時間' });
       if (!jobs.SLOTS[slot]) return json(res, 404, { error: `沒有 ${slot} 這個時段` });

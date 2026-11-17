@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { parseLevel, parseWorkbook, zoneOf } from '../src/sheet.js';
 import { annotate, findNew, countZones } from '../src/jobs.js';
 import * as M from '../src/messages.js';
+import * as F from '../src/features.js';
 
 // 1. 價位寫法
 assert.deepEqual(parseLevel('23X'), { raw: '23X', lo: 230, hi: 239 });
@@ -56,5 +57,31 @@ for (const m of msgs) {
   assert.ok(JSON.stringify(m.contents).length < 30000);
   (function walk(o) { if (o && typeof o === 'object') { if (o.type === 'text') assert.ok(o.text.length > 0, '空白文字 LINE 會拒收'); Object.values(o).forEach(walk); } })(m.contents);
 }
-console.log(`全部 ${all.length} 檔；到價判斷、新進入、訊息格式都正確`);
+// 5. 試算表異動
+const prevSnap = { 3037: { name: '欣興', group: '重點觀察', b1: '1110', b2: null, sb: '1025', tp1: '1450', tp2: null, tp3: null, tech: 9 }, 3653: { name: '健策', group: '其他追蹤', b1: '6700' } };
+const curSnap = { 3037: { name: '欣興', group: '其他追蹤', b1: '870', b2: null, sb: '1025', tp1: '1450', tp2: null, tp3: null, tech: 8.6 }, 2492: { name: '華新科', group: '其他追蹤' } };
+const d = F.diffSnapshots(prevSnap, curSnap);
+assert.deepEqual(d.map(x => x.kind), ['add', 'remove', 'level', 'group', 'score']);
+assert.ok(d[2].text.includes('買點1 1110 → 870'));
+msgs.push(M.morningMessage({ dateLabel: '11/17（二）', intl: [], counts: { sb: 1, b: 1, tp: 1 }, notes: [], alertTimes: ['10:30'], diffs: { since: '11/14', items: d } }));
+msgs.push(M.diffMessage({ since: '11/14', until: '11/17', items: d }));
+
+// 6. 查股、自訂提醒（用記憶體代替資料庫）
+assert.equal(F.findItem(rows, '欣興')?.code, '3037');
+assert.equal(F.findItem(rows, '3037')?.code, '3037');
+const card = await F.lookup(rows, '3037');
+msgs.push(card);
+assert.match(await F.addCustom('U1', rows, '3037', '700'), /跌到 700/);
+assert.match(await F.listCustom('U1'), /欣興 跌到 700/);
+assert.match(await F.cancelCustom('U1', rows, '欣興'), /已取消 3037/);
+assert.match(await F.listCustom('U1'), /沒有設定提醒/);
+
+// 7. 每週回顧訊息
+msgs.push(M.weeklyMessage({ range: '11/10–11/16', groups: [{ title: '本週到價', rows: [{ date: '11/12', code: '3037', name: '欣興', zone: 'sb', ret: 0.03 }] }, { title: '上週', rows: [] }], summary: '買點到價後上漲的比例：1/1' }));
+for (const m of msgs.slice(-4)) {
+  assert.ok(m.altText.length <= 400);
+  (function walk(o) { if (o && typeof o === 'object') { if (o.type === 'text') assert.ok(o.text.length > 0, '空白文字 LINE 會拒收'); Object.values(o).forEach(walk); } })(m.contents);
+}
+
+console.log(`全部 ${all.length} 檔；到價判斷、新進入、訊息格式、試算表異動、查股、自訂提醒都正確`);
 console.log('✓ 全部測試通過');

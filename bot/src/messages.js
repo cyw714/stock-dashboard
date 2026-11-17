@@ -66,7 +66,7 @@ function stockRow(s, extra) {
 }
 
 // ---------- 盤前晨報 ----------
-export function morningMessage({ dateLabel, intl, counts, notes, alertTimes }) {
+export function morningMessage({ dateLabel, intl, counts, notes, alertTimes, diffs = null }) {
   const body = [
     label('國際盤'),
     ...intl.map(r => box('baseline', [
@@ -84,9 +84,14 @@ export function morningMessage({ dateLabel, intl, counts, notes, alertTimes }) {
     ], { backgroundColor: ZONE[z].bg, cornerRadius: '8px', paddingAll: '6px' })), { spacing: 'sm' }),
   ];
   if (notes.length) body.push(sep(), label('今天注意'), ...notes.slice(0, 5).map(n => text(`• ${n}`, { size: 'xs' })));
+  if (diffs?.items.length) {
+    body.push(sep(), label(`試算表異動（${diffs.since} → 今天）`), ...diffs.items.slice(0, 5).map(diffRow));
+    if (diffs.items.length > 5) body.push(text(`另有 ${diffs.items.length - 5} 項變動 · 按「試算表異動」看全部`, { size: 'xxs', color: C.muted }));
+  }
   body.push(note(`今天到價整理：${alertTimes.join(' · ')}`));
   return flex(`盤前晨報 ${dateLabel}`, bubble('盤前晨報', `${dateLabel} 08:00`, body, [
-    { label: '到價列表', data: 'action=list' }, { label: '開儀表板', uri: DASHBOARD_URL },
+    { label: '到價列表', data: 'action=list' },
+    ...(diffs?.items.length ? [{ label: '試算表異動', data: 'action=diff' }] : [{ label: '開儀表板', uri: DASHBOARD_URL }]),
   ]));
 }
 
@@ -148,3 +153,56 @@ export function eventsMessage({ events }) {
 }
 
 export const textMessage = t => ({ type: 'text', text: t });
+
+// ---------- 試算表異動 ----------
+const DIFF_TAG = { add: ['新增', '#8EC3A6', '#1F2A24'], remove: ['移除', '#E39EA3', '#3A2224'], level: ['價位', '#3E3F43', '#EDEDEB'], group: ['分組', '#3E3F43', '#EDEDEB'], score: ['評分', '#3E3F43', '#EDEDEB'] };
+function diffRow(d) {
+  const [t, bg, fg] = DIFF_TAG[d.kind];
+  return box('horizontal', [
+    box('vertical', [text(t, { size: 'xxs', color: fg, weight: 'bold', align: 'center' })], { backgroundColor: bg, cornerRadius: '4px', paddingAll: '2px', width: '36px', flex: 0 }),
+    text(d.text, { size: 'xs', margin: 'sm', flex: 1 }),
+  ], { margin: 'xs' });
+}
+export function diffMessage(diffs) {
+  const body = diffs?.items.length ? diffs.items.slice(0, 40).map(diffRow) : [text('最近沒有異動。', { color: C.muted })];
+  return flex('試算表異動', bubble('試算表異動', diffs?.since ? `${diffs.since} → ${diffs.until}` : '', body));
+}
+
+// ---------- 查股小卡 ----------
+export function stockCard(s) {
+  const body = [
+    box('baseline', [
+      text(s.name ?? s.code, { size: 'lg', weight: 'bold', flex: 0, wrap: false }),
+      text(` ${s.code} · ${s.market}`, { size: 'xs', color: C.muted, flex: 1, wrap: false }),
+    ]),
+    box('baseline', [
+      text(fmtPrice(s.price), { size: 'xl', weight: 'bold', flex: 0 }),
+      text(s.stale ? `　${s.stale}` : `　${fmtPct(s.pct)}`, { size: 'sm', color: s.stale ? C.muted : pctColor(s.pct), weight: 'bold' }),
+    ]),
+  ];
+  if (s.zone) body.push(box('horizontal', [chip(s.zone), text(s.ref ?? '', { size: 'xs', color: C.muted, margin: 'sm', gravity: 'center' })], { margin: 'sm' }));
+  else if (s.inList) body.push(text('目前不在買點區或目標價', { size: 'xs', color: C.muted, margin: 'sm' }));
+  body.push(sep());
+  const kv = (k, v) => box('baseline', [text(k, { size: 'xs', color: C.muted, flex: 3 }), text(v, { size: 'sm', align: 'end', flex: 4, weight: 'bold' })]);
+  for (const [k, v] of s.rows) body.push(kv(k, v));
+  if (s.note) body.push(note(s.note));
+  return flex(`${s.name ?? s.code} ${fmtPrice(s.price)}`, bubble(s.name ?? s.code, '查股', body, [{ label: '開儀表板', uri: DASHBOARD_URL }]));
+}
+
+// ---------- 每週回顧 ----------
+export function weeklyMessage({ range, groups, summary }) {
+  const body = [];
+  for (const g of groups) {
+    if (body.length) body.push(sep());
+    body.push(label(`${g.title} · ${g.rows.length} 筆`));
+    if (!g.rows.length) { body.push(text('沒有紀錄', { size: 'xs', color: C.muted })); continue; }
+    body.push(...g.rows.slice(0, 8).map(r => box('baseline', [
+      text(`${r.date} ${r.name ?? r.code}`, { size: 'xs', flex: 5, wrap: false }),
+      text(ZONE[r.zone]?.label ?? r.zone, { size: 'xxs', color: C.muted, flex: 3 }),
+      text(fmtPct(r.ret), { size: 'xs', align: 'end', flex: 2, color: pctColor(r.ret), weight: 'bold' }),
+    ])));
+    if (g.rows.length > 8) body.push(text(`…還有 ${g.rows.length - 8} 筆`, { size: 'xxs', color: C.muted }));
+  }
+  if (summary) body.push(note(summary));
+  return flex(`每週回顧 ${range}`, bubble('每週回顧', range, body, [{ label: '開儀表板', uri: DASHBOARD_URL }]));
+}

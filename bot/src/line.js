@@ -28,6 +28,11 @@ export async function send(messages) {
   return call('/message/broadcast', { messages: msgs });
 }
 
+// 私訊某一個人（自訂提醒用）
+export async function pushTo(userId, messages) {
+  return call('/message/push', { to: userId, messages: Array.isArray(messages) ? messages : [messages] });
+}
+
 // 只私訊你（看門狗警報用）
 export async function pushAdmin(text) {
   return call('/message/push', { to: process.env.LINE_ADMIN_USER_ID, messages: [{ type: 'text', text }] });
