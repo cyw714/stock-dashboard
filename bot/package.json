@@ -1,0 +1,16 @@
+{
+  "name": "stockie-bot",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node test/run-tests.mjs"
+  },
+  "dependencies": {
+    "fflate": "^0.8.2",
+    "@google-cloud/firestore": "^7.10.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

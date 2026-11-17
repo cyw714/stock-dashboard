@@ -1,0 +1,106 @@
+# 自動部署 stockie 到 Google Cloud
+# 什麼時候會跑：bot/ 資料夾有變動並推上 v2 或 main 時；也可以在 Actions 頁面手動按「Run workflow」
+#
+# 做的事：
+#   1. 用「GitHub 身分驗證」登入 Google Cloud（不需要金鑰檔）
+#   2. 把 bot/ 打包成容器，放進程式倉庫
+#   3. 更新 Cloud Run 上的 stockie
+#   4. 建立或更新 4 個鬧鐘（全部用台北時間）
+
+name: 部署 stockie
+
+on:
+  push:
+    branches: [v2, main]
+    paths: ['bot/**', '.github/workflows/bot-deploy.yml']
+  workflow_dispatch:
+
+concurrency: bot-deploy
+
+env:
+  REGION: asia-east1
+  SERVICE: stockie
+  IMAGE: asia-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/stockie/stockie:${{ github.sha }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write   # 讓 GitHub 能出示「身分證」給 Google Cloud
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 先跑測試（測試沒過就不部署）
+        working-directory: bot
+        run: |
+          npm ci
+          npm test -- test/fixture.xlsx
+          curl -sL -o /tmp/sheet.xlsx "https://docs.google.com/spreadsheets/d/1OdeqbHAtR8F-0Hu2zYFHeIck8Xzj7cXeEuRVWgL7M1A/export?format=xlsx"
+          node test/live-sheet.mjs /tmp/sheet.xlsx
+
+      - name: 登入 Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOYER_SA }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: 打包並上傳容器
+        run: |
+          gcloud auth configure-docker $REGION-docker.pkg.dev --quiet
+          docker build -t "$IMAGE" bot
+          docker push "$IMAGE"
+
+      - name: 更新 Cloud Run
+        env:
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_CHANNEL_SECRET: ${{ secrets.LINE_CHANNEL_SECRET }}
+          LINE_ADMIN_USER_ID: ${{ secrets.LINE_ADMIN_USER_ID }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          # 測試模式（只發給你）／群發，由 GitHub 的 Variables 控制，預設是測試模式
+          TEST_MODE: ${{ vars.TEST_MODE || 'true' }}
+          ALERT_SKIP_EMPTY: ${{ vars.ALERT_SKIP_EMPTY || 'false' }}
+        run: |
+          # 用檔案傳環境變數，避免 token 裡的特殊符號出問題；檔案用完就刪
+          umask 077
+          {
+            echo "LINE_CHANNEL_ACCESS_TOKEN: '$LINE_CHANNEL_ACCESS_TOKEN'"
+            echo "LINE_CHANNEL_SECRET: '$LINE_CHANNEL_SECRET'"
+            echo "LINE_ADMIN_USER_ID: '$LINE_ADMIN_USER_ID'"
+            echo "CRON_SECRET: '$CRON_SECRET'"
+            echo "GOOGLE_CLOUD_PROJECT: '$GCP_PROJECT_ID'"
+            echo "TEST_MODE: '$TEST_MODE'"
+            echo "ALERT_SKIP_EMPTY: '$ALERT_SKIP_EMPTY'"
+          } > /tmp/env.yaml
+          gcloud run deploy $SERVICE --image "$IMAGE" --region $REGION \
+            --service-account "stockie-runner@$GCP_PROJECT_ID.iam.gserviceaccount.com" \
+            --allow-unauthenticated --env-vars-file /tmp/env.yaml \
+            --memory 512Mi --cpu 1 --timeout 300 --max-instances 2 --quiet
+          rm -f /tmp/env.yaml
+
+      - name: 建立／更新鬧鐘（台北時間）
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          URL=$(gcloud run services describe $SERVICE --region $REGION --format='value(status.url)')
+          echo "stockie 網址：$URL"
+          upsert () {  # 名稱 時間 路徑 說明
+            if gcloud scheduler jobs describe "$1" --location $REGION >/dev/null 2>&1; then
+              gcloud scheduler jobs update http "$1" --location $REGION --schedule "$2" --time-zone "Asia/Taipei" \
+                --uri "$URL$3" --http-method POST --update-headers "X-Cron-Secret=$CRON_SECRET" \
+                --attempt-deadline 300s --max-retry-attempts 2 --min-backoff 60s --description "$4" --quiet
+            else
+              gcloud scheduler jobs create http "$1" --location $REGION --schedule "$2" --time-zone "Asia/Taipei" \
+                --uri "$URL$3" --http-method POST --headers "X-Cron-Secret=$CRON_SECRET" \
+                --attempt-deadline 300s --max-retry-attempts 2 --min-backoff 60s --description "$4" --quiet
+            fi
+          }
+          upsert stockie-morning  "0 8 * * 1-5"        /cron/morning  "08:00 盤前晨報"
+          upsert stockie-alert-am "30 10,11 * * 1-5"   /cron/alert    "10:30、11:30 到價整理"
+          upsert stockie-alert-pm "0 13 * * 1-5"       /cron/alert    "13:00 到價整理"
+          upsert stockie-watchdog "*/5 8-14 * * 1-5"   /cron/watchdog "看門狗：每 5 分鐘檢查有沒有漏發"
+          echo "### ✅ 部署完成" >> $GITHUB_STEP_SUMMARY
+          echo "LINE Webhook 網址（正式切換時才要填）：\`$URL/line/webhook\`" >> $GITHUB_STEP_SUMMARY
