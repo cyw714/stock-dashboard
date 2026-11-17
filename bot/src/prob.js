@@ -31,3 +31,15 @@ export async function modelData() {
   }
   return cache.data;
 }
+
+// 「今天收盤前」還剩多少交易時間（一整天 = 1）；已收盤或假日就算下一個交易日一整天
+const SESS = { '台股': [540, 810], '日股': [480, 870], '美股': [1350, 1740] };   // 台北時間，分鐘（美股跨夜）
+export function todayLeft(market, now = new Date()) {
+  const [o, c] = SESS[market] ?? SESS['台股'];
+  const t = new Date(now.getTime() + 8 * 3600e3);
+  let wd = t.getUTCDay(), m = t.getUTCHours() * 60 + t.getUTCMinutes();
+  if (market === '美股' && m < 600) { m += 1440; wd = (wd + 6) % 7; }
+  if (wd === 0 || wd === 6 || m >= c) return { T: 1, label: '下個交易日' };
+  if (m <= o) return { T: 1, label: '今天' };
+  return { T: Math.max(0.02, (c - m) / (c - o)), label: '今天收盤前' };
+}

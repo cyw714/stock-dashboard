@@ -4,7 +4,7 @@ import * as store from './store.js';
 import * as line from './line.js';
 import * as M from './messages.js';
 import { quotesFor, twQuotes } from './quotes.js';
-import { hitP, fprob, modelData } from './prob.js';
+import { hitP, fprob, modelData, todayLeft } from './prob.js';
 import { tpeDate, tpeMinutes } from './time.js';
 
 const fp = M.fmtPrice;
@@ -89,8 +89,13 @@ export async function lookup(rows, q) {
     ['模型參考', m ? m.score.toFixed(1) : '—'],
   ];
   if (m && price) {
-    if (buyHi && price > buyHi) info.push(['60 天跌到買點1', fprob(hitP(price, buyHi, m.prob.mu, m.prob.sigma, 60))]);
-    if (x.tp.tp1?.lo) info.push(['60 天到 TP1', fprob(hitP(price, x.tp.tp1.lo, m.prob.mu, m.prob.sigma, 60))]);
+    const d = todayLeft(x.market);
+    const P = (L, T) => fprob(hitP(price, L, m.prob.mu, m.prob.sigma, T));
+    const targets = [];
+    if (buyHi && price > buyHi) targets.push(['買點1', buyHi]);
+    if (x.buy.sb?.hi && price > x.buy.sb.hi && x.buy.sb.hi !== buyHi) targets.push(['超級好買點', x.buy.sb.hi]);
+    if (x.tp.tp1?.lo) targets.push(['TP1', x.tp.tp1.lo]);
+    for (const [k, L] of targets.slice(0, 2)) info.push([`到${k}（${d.label}／5天）`, `${P(L, d.T)}／${P(L, 5)}`]);
   }
   info.push(['最佳買點', best?.raw ?? '—'], ['TP1', x.tp.tp1?.raw ?? '—']);
   return M.stockCard({ ...x, price, stale, inList: true, rows: info });
