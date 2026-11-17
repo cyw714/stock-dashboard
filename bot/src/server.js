@@ -11,9 +11,10 @@ import { createServer } from 'node:http';
 import { timingSafeEqual } from 'node:crypto';
 import * as jobs from './jobs.js';
 import { verifySignature } from './line.js';
-import { quotesFor } from './quotes.js';
+import { quotesFor, yahooQuotes, txfQuote } from './quotes.js';
 
 const PORT = process.env.PORT || 8080;
+let apiCache = { at: 0, data: null };
 
 const readBody = req => new Promise((resolve, reject) => {
   const chunks = [];
@@ -59,9 +60,13 @@ const server = createServer(async (req, res) => {
     }
 
     if (path === '/api/watchlist' && req.method === 'GET') {
+      // 30 秒內重複開網頁就用同一份，不要一直去敲證交所
+      if (apiCache.data && Date.now() - apiCache.at < 30_000) return json(res, 200, apiCache.data, { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'public, max-age=30' });
       const items = await jobs.watchlist();
-      const { prices } = await quotesFor(items);
-      return json(res, 200, { updated: new Date().toISOString(), items: jobs.annotate(items, prices) },
+      const [{ prices }, intl, txf] = await Promise.all([quotesFor(items), yahooQuotes(['^IXIC', '^SOX']), txfQuote()]);
+      const market = { index: prices.TAIEX ?? null, txf, nasdaq: intl['^IXIC'], sox: intl['^SOX'] };
+      apiCache = { at: Date.now(), data: { updated: new Date().toISOString(), market, items: jobs.annotate(items, prices) } };
+      return json(res, 200, apiCache.data,
         { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'public, max-age=30' });
     }
 

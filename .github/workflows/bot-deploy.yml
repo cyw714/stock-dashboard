@@ -119,3 +119,11 @@ jobs:
             echo "$KIND 結果：$RESULT"
             echo "- $KIND：\`$RESULT\`" >> $GITHUB_STEP_SUMMARY
           done
+
+      - name: 換上新的圖文選單（commit 訊息裡有 [換選單] 時才會跑，正式切換用）
+        if: contains(github.event.head_commit.message, '[換選單]')
+        working-directory: bot
+        env:
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_ADMIN_USER_ID: ${{ secrets.LINE_ADMIN_USER_ID }}
+        run: node tools/richmenu.mjs live

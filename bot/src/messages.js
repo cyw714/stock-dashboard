@@ -3,17 +3,18 @@
 
 export const DASHBOARD_URL = 'https://cyw714.github.io/stock-dashboard/';
 
+// A 版：全炭灰，和儀表板炭灰版同一套顏色（紅漲綠跌）
 const C = {
-  head: '#35363A', ink: '#26282B', muted: '#6B6F76', line: '#E6E6E3', soft: '#F3F3F1',
-  up: '#B3261E', down: '#1E7A46', link: '#3F5168',
+  head: '#2A2B2E', body: '#35363A', ink: '#EDEDEB', muted: '#A8AAAE', line: '#4B4C51', soft: '#3E3F43',
+  up: '#E39EA3', down: '#8EC3A6', link: '#B7C2D6',
 };
 export const ZONE = {
-  sb: { label: '超級好買點', bg: '#39424E', fg: '#FFFFFF', rank: 3 },
-  b2: { label: '買點2', bg: '#5D6B7C', fg: '#FFFFFF', rank: 2 },
-  b1: { label: '買點1', bg: '#DCE1E7', fg: '#2C3440', rank: 1 },
-  tp1: { label: 'TP1', bg: '#F1E2CC', fg: '#6E4210', rank: 1 },
-  tp2: { label: 'TP2', bg: '#F1E2CC', fg: '#6E4210', rank: 2 },
-  tp3: { label: 'TP3', bg: '#F1E2CC', fg: '#6E4210', rank: 3 },
+  sb: { label: '超級好買點', bg: '#8EC3A6', fg: '#1F2A24', rank: 3 },
+  b2: { label: '買點2', bg: '#354740', fg: '#8EC3A6', rank: 2 },
+  b1: { label: '買點1', bg: '#354740', fg: '#8EC3A6', rank: 1 },
+  tp1: { label: 'TP1', bg: '#4A3A3C', fg: '#E39EA3', rank: 1 },
+  tp2: { label: 'TP2', bg: '#4A3A3C', fg: '#E39EA3', rank: 2 },
+  tp3: { label: 'TP3', bg: '#4A3A3C', fg: '#E39EA3', rank: 3 },
 };
 
 // ---------- 小工具 ----------
@@ -34,14 +35,14 @@ function bubble(title, sub, body, buttons = []) {
     type: 'bubble', size: 'mega',
     header: box('baseline', [
       text(title, { size: 'md', color: '#FFFFFF', weight: 'bold', flex: 0, wrap: false }),
-      text(sub, { size: 'xs', color: '#C9CBCE', align: 'end' }),
+      text(sub, { size: 'xs', color: C.muted, align: 'end' }),
     ], { backgroundColor: C.head, paddingAll: '12px' }),
-    body: box('vertical', body, { paddingAll: '14px', spacing: 'sm' }),
+    body: box('vertical', body, { paddingAll: '14px', spacing: 'sm', backgroundColor: C.body }),
     ...(buttons.length ? {
       footer: box('horizontal', buttons.map(b => ({
         type: 'button', height: 'sm', style: 'link', color: C.link,
         action: b.uri ? { type: 'uri', label: b.label, uri: b.uri } : { type: 'postback', label: b.label, data: b.data, displayText: b.label },
-      })), { paddingAll: '4px' }),
+      })), { paddingAll: '4px', backgroundColor: C.body, borderColor: C.line, borderWidth: 'light' }),
     } : {}),
   };
 }
