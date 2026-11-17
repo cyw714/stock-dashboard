@@ -275,6 +275,18 @@ function ladderHTML(x, big) {
   return `<div class="ladder">${h}</div>`;
 }
 
+// 「今天收盤前」還剩多少交易時間（以一整天 = 1 計算）。已收盤或假日 → 算下一個交易日一整天
+const SESS = { '台股': [540, 810], '日股': [480, 870], '美股': [1350, 1740] };   // 台北時間，分鐘（美股跨夜）
+function todayLeft(market) {
+  const [o, c] = SESS[market] || SESS['台股'];
+  const t = new Date(Date.now() + 8 * 3600e3);
+  let wd = t.getUTCDay(), m = t.getUTCHours() * 60 + t.getUTCMinutes();
+  if (market === '美股' && m < 600) { m += 1440; wd = (wd + 6) % 7; }   // 半夜到早上 10 點：還在前一天的美股盤
+  if (wd === 0 || wd === 6 || m >= c) return { T: 1, label: '下個交易日' };
+  if (m <= o) return { T: 1, label: '今天' };
+  return { T: Math.max(0.02, (c - m) / (c - o)), label: '今天收盤前' };
+}
+
 function probOf(x, L, T) {
   const md = D.model[x.code];
   if (!md || !L || !x.price) return null;
@@ -296,6 +308,15 @@ function hedgeCard(x) {
   </section>`;
 }
 
+// 卡片上顯示哪一個價位的機率：還沒到買點就看最近的買點，已在買點區就看 TP1
+function nearL(x) {
+  if (!x.price) return null;
+  const hi = buyHi(x);
+  if (hi && x.price > hi) return { k: '買點', v: hi };
+  if (x.tp.tp1?.lo) return { k: ' TP1', v: x.tp.tp1.lo };
+  return null;
+}
+
 function card(x) {
   if (x.code === 'TAIEX') return hedgeCard(x);
   const p = D.prof[x.code] || {}, md = D.model[x.code];
@@ -311,7 +332,7 @@ function card(x) {
     ${ladderHTML(x)}
     <div class="minis">
       <div class="mini"><span class="k">技術評分 · 模型參考</span><span class="v">${tech != null ? tech.toFixed(1) : '—'} <span class="muted" style="font-size:12px;font-weight:400">/ ${md ? md.score.toFixed(1) : '—'}</span></span></div>
-      <div class="mini"><span class="k">60 天到 TP1</span><span class="v">${fprob(probOf(x, x.tp.tp1?.lo, 60))}</span></div>
+      ${(() => { const d = todayLeft(x.market), L = nearL(x); return `<div class="mini"><span class="k">${L ? `${d.label === '今天收盤前' ? '今天' : d.label}到${L.k}` : '到價機率'}</span><span class="v">${L ? fprob(probOf(x, L.v, d.T)) : '—'} <span class="muted" style="font-size:12px;font-weight:400">/ 5天 ${L ? fprob(probOf(x, L.v, 5)) : '—'}</span></span></div>`; })()}
     </div>
     ${x.note ? `<span class="note">${esc(x.note)}</span>` : ''}
     <div class="c-foot"><span>最佳買點 <b>${best ? esc(best.raw) : '—'}</b></span><span class="gain"><small style="font:500 11px 'Noto Sans TC';color:var(--muted);margin-right:4px">到 TP1</small>${gain == null ? '—' : (gain > 0 ? '+' : '') + (gain * 100).toFixed(1) + '%'}</span></div>
@@ -334,12 +355,10 @@ function drawer(code, reset = true) {
   if (!tabs.some(([k]) => k === S.tab)) S.tab = 'ov';
 
   const lastRev = rev[rev.length - 1];
-  const p60b1 = probOf(x, buyHi(x) && x.price < buyHi(x) ? null : buyHi(x), 60);
+  const dl = todayLeft(x.market), nl = nearL(x);
   const tiles = [
     { k: '技術評分', v: x.scores.tech != null ? x.scores.tech.toFixed(1) : '—', s: `模型參考 ${md ? md.score.toFixed(1) : '—'}`, go: 'score', gol: '技術評分' },
-    x.price && buyHi(x) && x.price > buyHi(x)
-      ? { k: '60 天跌到買點1', v: fprob(p60b1), s: `TP1：${fprob(probOf(x, x.tp.tp1?.lo, 60))}`, go: 'price', gol: '價位與機率' }
-      : { k: '60 天到 TP1', v: fprob(probOf(x, x.tp.tp1?.lo, 60)), s: x.tp.tp2 ? `TP2：${fprob(probOf(x, x.tp.tp2.lo, 60))}` : '', go: 'price', gol: '價位與機率' },
+    nl ? { k: `${dl.label}到${nl.k} ${fp(nl.v)}`, v: fprob(probOf(x, nl.v, dl.T)), s: `5 天內：${fprob(probOf(x, nl.v, 5))}`, go: 'price', gol: '價位與機率' } : null,
     lastRev ? { k: `${+lastRev.ym.slice(5)} 月營收年增`, v: lastRev.yoy == null ? '—' : `${lastRev.yoy > 0 ? '+' : ''}${(lastRev.yoy * 100).toFixed(1)}%`, cls: cls(lastRev.yoy), s: `${(lastRev.rev / 1e8).toFixed(1)} 億元`, go: 'fund', gol: '營收・財報' } : null,
     pe ? { k: '本益比', v: `${pe.per} 倍`, s: `近 ${pe.years} 年 ${(pe.pct * 100).toFixed(0)}% 位置`, go: 'fund', gol: '估值' } : null,
   ].filter(Boolean);
@@ -359,8 +378,9 @@ function drawer(code, reset = true) {
       ${lv.map(([k, L, e, c]) => `<tr><td class="${c}">${k}</td><td class="r">${esc(L.raw)}</td><td class="r ${c}">${L[e] && x.price ? `${L[e] / x.price - 1 > 0 ? '+' : ''}${((L[e] / x.price - 1) * 100).toFixed(1)}%` : '—'}</td></tr>`).join('')}</table></section>`;
     if (md && x.price) {
       const targets = lv.filter(r => r[1][r[2]]).map(([k, L, e, c]) => ({ k, v: L[e], c }));
-      body += `<section class="sec"><h3>到價機率（期間內碰到）</h3><table class="t"><tr><th>目標</th><th class="r">20 天內</th><th class="r">60 天內</th></tr>
-        ${targets.map(t => `<tr><td class="${t.c}">${t.k} ${fp(t.v)}</td><td class="r">${fprob(hitP(x.price, t.v, md.prob.mu, md.prob.sigma, 20))}</td><td class="r" style="font-weight:700">${fprob(hitP(x.price, t.v, md.prob.mu, md.prob.sigma, 60))}</td></tr>`).join('')}</table></section>`;
+      body += `<section class="sec"><h3>到價機率（期間內碰到）</h3><table class="t"><tr><th>目標</th><th class="r">距現價</th><th class="r">${dl.label}</th><th class="r">5 天內</th></tr>
+        ${targets.map(t => `<tr><td class="${t.c}">${t.k} ${fp(t.v)}</td><td class="r">${(t.v / x.price - 1) > 0 ? '+' : ''}${((t.v / x.price - 1) * 100).toFixed(1)}%</td><td class="r" style="font-weight:700">${fprob(hitP(x.price, t.v, md.prob.mu, md.prob.sigma, dl.T))}</td><td class="r">${fprob(hitP(x.price, t.v, md.prob.mu, md.prob.sigma, 5))}</td></tr>`).join('')}</table>
+        <p class="muted" style="margin:6px 0 0;font-size:12px">「${dl.label}」依照現在到收盤剩下的交易時間計算，時間越晚、能碰到的範圍越小；這檔平常一天大約晃 ${(md.prob.sigma * 100).toFixed(1)}%。</p></section>`;
       body += histHTML(x, md, targets);
     } else body += `<p class="muted">這檔還沒有足夠的歷史資料（需要至少 70 個交易日），所以暫時算不出到價機率。</p>`;
   }
@@ -409,7 +429,7 @@ function drawer(code, reset = true) {
 }
 
 function histHTML(x, md, targets) {
-  const S0 = x.price, T = 60, mu = md.prob.mu, sig = md.prob.sigma, v = sig * Math.sqrt(T), m = Math.log(S0) + mu * T;
+  const S0 = x.price, T = 5, mu = md.prob.mu, sig = md.prob.sigma, v = sig * Math.sqrt(T), m = Math.log(S0) + mu * T;
   const lo = Math.exp(m - 2.6 * v), hi = Math.exp(m + 2.6 * v), n = 19, w = (hi - lo) / n;
   const pdf = s => Math.exp(-((Math.log(s) - m) ** 2) / (2 * v * v)) / (s * v);
   const ys = Array.from({ length: n }, (_, i) => pdf(lo + (i + 0.5) * w)), mx = Math.max(...ys);
@@ -417,10 +437,10 @@ function histHTML(x, md, targets) {
   const q1 = Math.exp(m - 0.674 * v), q3 = Math.exp(m + 0.674 * v), med = Math.exp(m), below = N((Math.log(S0) - m) / v);
   const lines = [{ v: S0, c: 'var(--now)', t: `現價 ${fp(S0)}` }, ...targets.filter(t => t.v > lo && t.v < hi).slice(0, 3).map(t => ({ v: t.v, c: `var(--${t.c})`, t: `${t.k} ${fp(t.v)}` }))];
   const out = targets.filter(t => t.v >= hi || t.v <= lo).map(t => t.k);
-  return `<section class="sec"><h3>60 天後股價可能落點</h3><div class="hist"><div class="cols">${ys.map(y => `<i style="height:${Math.round(y / mx * 150)}px"></i>`).join('')}</div>
+  return `<section class="sec"><h3>5 個交易日後股價可能落點</h3><div class="hist"><div class="cols">${ys.map(y => `<i style="height:${Math.round(y / mx * 150)}px"></i>`).join('')}</div>
     ${lines.map((l, i) => `<div class="vl" style="left:${pos(l.v)};background:${l.c}"></div><span class="vt" style="left:${pos(l.v)};color:${l.c};top:${-18 + i * 16}px">${l.t}</span>`).join('')}
     <span class="mono muted" style="position:absolute;left:0;bottom:0;font-size:11px">${fp(lo)}</span><span class="mono muted" style="position:absolute;right:0;bottom:0;font-size:11px">${fp(hi)}${out.length ? `（${out.join('、')} 在圖外）` : ''}</span></div>
-    <p style="margin:8px 0 0;line-height:1.65">中間一半的情況落在 ${fp(q1)}–${fp(q3)}，中位數 ${fp(med)}；60 天後低於現價的機率約 ${(below * 100).toFixed(0)}%。</p>
+    <p style="margin:8px 0 0;line-height:1.65">中間一半的情況落在 ${fp(q1)}–${fp(q3)}，中位數 ${fp(med)}；5 天後低於現價的機率約 ${(below * 100).toFixed(0)}%。</p>
     <details class="muted" style="margin-top:6px"><summary>怎麼算的</summary><div style="padding-top:6px;line-height:1.7">用 ${md.asof.slice(5).replace('-', '/')} 收盤為止的均線和波動，配上現在的價格即時計算；每天收盤後更新。<br>坡度：月線 ${fp(md.ma20)} vs 季線 ${fp(md.ma60)} → 每天 ${(md.prob.muRaw * 100).toFixed(3)}%${md.prob.muRaw > 0 ? '，上坡打五折 → ' + (mu * 100).toFixed(3) + '%' : '（下坡照算）'}。晃動：每天約 ${(sig * 100).toFixed(2)}%（年化 ${md.prob.volAnn}%）。</div></details></section>`;
 }
 
