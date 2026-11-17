@@ -46,7 +46,7 @@ export async function sheetDiff(items, names, { save = true } = {}) {
   const prev = await store.get('cache/sheetSnapshot');
   const today = tpeDate();
   if (!prev?.data) {
-    if (save) await store.set('cache/sheetSnapshot', { data: cur, date: today }, false);
+    await store.set('cache/sheetSnapshot', { data: cur, date: today }, false);  // 第一次：先存一份當比較基準
     return null;  // 第一次：還沒有可以比的
   }
   const result = { since: shortDate(prev.date), until: shortDate(today), items: diffSnapshots(prev.data, cur, names) };
