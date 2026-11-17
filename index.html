@@ -196,6 +196,11 @@ async function load(first) {
   D.market = api.market || {};
   D.updated = api.updated;
   if (first) { D.info = info; D.pe = pe.data || {}; D.model = model.stocks || {}; D.prof = prof.stocks || {}; }
+  // 即時價抓不到時，先用最近一次收盤價（模型資料裡的）頂著，機率也照樣算得出來
+  for (const x of D.items) {
+    const md = D.model[x.code];
+    if (x.price == null && md) { x.price = md.close; x.pct = null; x.fromClose = md.asof; }
+  }
   render();
 }
 
@@ -287,7 +292,7 @@ function card(x) {
   return `<button type="button" class="card ${kind} ${x.group === '重點觀察' ? 'focus' : ''}" data-open="${esc(x.code)}">
     ${z ? `<span class="chip" style="color:var(--${isBuy(z) ? 'down' : 'up'})">${ZL[z]}</span>` : ''}
     <div class="c-head"><span class="code">${esc(x.code)}</span><span class="pill">${esc(x.market)}</span>${x.group === '重點觀察' ? '<span class="pill focus">重點觀察</span>' : ''}${tech != null ? `<span class="score ${tech >= 9 ? 'hi' : ''}">${tech.toFixed(1)}</span>` : ''}</div>
-    <div class="c-name"><b>${esc(x.name || p.name || x.code)}</b><span class="px">${fp(x.price)} <span class="${cls(x.pct)}" style="font-size:12px">${fpc(x.pct)}</span></span></div>
+    <div class="c-name"><b>${esc(x.name || p.name || x.code)}</b><span class="px">${fp(x.price)} ${x.fromClose ? `<span class="muted" style="font-size:11px">${x.fromClose.slice(5).replace('-', '/')} 收盤</span>` : `<span class="${cls(x.pct)}" style="font-size:12px">${fpc(x.pct)}</span>`}</span></div>
     <div class="c-tag">${esc(p.tag || '')}</div>
     ${ladderHTML(x)}
     <div class="minis">
@@ -343,7 +348,7 @@ function drawer(code, reset = true) {
       body += `<section class="sec"><h3>到價機率（期間內碰到）</h3><table class="t"><tr><th>目標</th><th class="r">20 天內</th><th class="r">60 天內</th></tr>
         ${targets.map(t => `<tr><td class="${t.c}">${t.k} ${fp(t.v)}</td><td class="r">${fprob(hitP(x.price, t.v, md.prob.mu, md.prob.sigma, 20))}</td><td class="r" style="font-weight:700">${fprob(hitP(x.price, t.v, md.prob.mu, md.prob.sigma, 60))}</td></tr>`).join('')}</table></section>`;
       body += histHTML(x, md, targets);
-    } else body += `<p class="muted">到價機率會在每天收盤後的模型計算完成後顯示。</p>`;
+    } else body += `<p class="muted">這檔還沒有足夠的歷史資料（需要至少 70 個交易日），所以暫時算不出到價機率。</p>`;
   }
   if (S.tab === 'score') {
     body = `<div class="tiles"><div class="tile" style="cursor:default;background:#4A4C51"><span style="font-size:12px;color:#C9CBCE">技術評分</span><span class="v" style="font-size:30px">${x.scores.tech != null ? x.scores.tech.toFixed(1) : '—'}</span><span style="font-size:12px;color:#C9CBCE">試算表技術面</span></div>
@@ -381,7 +386,7 @@ function drawer(code, reset = true) {
 
   const name = x.name || p.name || x.code;
   $('#drawer').innerHTML = `<div class="d-top"><div class="row"><div><span class="code">${esc(x.code)} · ${esc(x.market)}${p.ind ? ' · ' + esc(p.ind) : ''}</span>
-      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><h2>${esc(name)}</h2><span class="mono" style="font-size:20px;font-weight:600">${fp(x.price)}</span><span class="mono ${cls(x.pct)}" style="font-weight:600">${fpc(x.pct)}</span>
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><h2>${esc(name)}</h2><span class="mono" style="font-size:20px;font-weight:600">${fp(x.price)}</span>${x.fromClose ? `<span class="muted" style="font-size:12px">${x.fromClose.slice(5).replace('-', '/')} 收盤價（即時價暫時抓不到）</span>` : `<span class="mono ${cls(x.pct)}" style="font-weight:600">${fpc(x.pct)}</span>`}
       ${z ? `<span style="font-size:12px;font-weight:700;padding:1px 10px;border-radius:999px;border:1px solid currentColor;color:var(--${isBuy(z) ? 'down' : 'up'})">${ZL[z]}</span>` : ''}</div></div>
       <button type="button" class="close" aria-label="關閉" data-close>×</button></div>
     <div class="tabs" role="tablist">${tabs.map(([k, l]) => `<button type="button" role="tab" aria-selected="${S.tab === k}" data-tab="${k}">${l}</button>`).join('')}</div></div>
@@ -402,7 +407,7 @@ function histHTML(x, md, targets) {
     ${lines.map((l, i) => `<div class="vl" style="left:${pos(l.v)};background:${l.c}"></div><span class="vt" style="left:${pos(l.v)};color:${l.c};top:${-18 + i * 16}px">${l.t}</span>`).join('')}
     <span class="mono muted" style="position:absolute;left:0;bottom:0;font-size:11px">${fp(lo)}</span><span class="mono muted" style="position:absolute;right:0;bottom:0;font-size:11px">${fp(hi)}${out.length ? `（${out.join('、')} 在圖外）` : ''}</span></div>
     <p style="margin:8px 0 0;line-height:1.65">中間一半的情況落在 ${fp(q1)}–${fp(q3)}，中位數 ${fp(med)}；60 天後低於現價的機率約 ${(below * 100).toFixed(0)}%。</p>
-    <details class="muted" style="margin-top:6px"><summary>怎麼算的</summary><div style="padding-top:6px;line-height:1.7">坡度：月線 ${fp(md.ma20)} vs 季線 ${fp(md.ma60)} → 每天 ${(md.prob.muRaw * 100).toFixed(3)}%${md.prob.muRaw > 0 ? '，上坡打五折 → ' + (mu * 100).toFixed(3) + '%' : '（下坡照算）'}。晃動：每天約 ${(sig * 100).toFixed(2)}%（年化 ${md.prob.volAnn}%）。</div></details></section>`;
+    <details class="muted" style="margin-top:6px"><summary>怎麼算的</summary><div style="padding-top:6px;line-height:1.7">用 ${md.asof.slice(5).replace('-', '/')} 收盤為止的均線和波動，配上現在的價格即時計算；每天收盤後更新。<br>坡度：月線 ${fp(md.ma20)} vs 季線 ${fp(md.ma60)} → 每天 ${(md.prob.muRaw * 100).toFixed(3)}%${md.prob.muRaw > 0 ? '，上坡打五折 → ' + (mu * 100).toFixed(3) + '%' : '（下坡照算）'}。晃動：每天約 ${(sig * 100).toFixed(2)}%（年化 ${md.prob.volAnn}%）。</div></details></section>`;
 }
 
 function closeDrawer() {
