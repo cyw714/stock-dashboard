@@ -299,7 +299,7 @@ function hedgeCard(x) {
     <div class="hd-tiles">${gTile}${sTile}
       <a class="hd-tile hd-link" href="${HEDGE_URL}" target="_blank" rel="noopener"><span style="font-size:12px;color:var(--accent)">建議避險部位</span><b style="font-size:16px;color:var(--accent)">開啟避險儀表板 →</b><span class="muted" style="font-size:12px">部位試算在避險儀表板</span></a></div>
     <table class="t"><tr><th>避險加碼點</th><th class="r">配置</th><th class="r">距現在</th></tr>
-      ${lv.map(({ L, a }) => `<tr><td class="mono">${esc(L.raw)}</td><td class="r">${esc(a || '—')}</td><td class="r">${x.price ? `${(L.lo / x.price - 1) > 0 ? '+' : ''}${((L.lo / x.price - 1) * 100).toFixed(1)}%` : '—'}</td></tr>`).join('')}</table>
+      ${lv.length ? lv.map(({ L, a }) => `<tr><td class="mono">${esc(L.raw)}</td><td class="r">${esc(a || '—')}</td><td class="r">${x.price ? `${(L.lo / x.price - 1) > 0 ? '+' : ''}${((L.lo / x.price - 1) * 100).toFixed(1)}%` : '—'}</td></tr>`).join('') : '<tr><td colspan="3" class="muted">試算表「大盤」那一列目前沒有填避險加碼點</td></tr>'}</table>
   </section>`;
 }
 
