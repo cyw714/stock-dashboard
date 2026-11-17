@@ -134,7 +134,7 @@ async function infoJson() {
   } catch { return {}; }
 }
 
-// ---------- 大盤避險：試算表的加碼點＋避險儀表板的 G 分數（有 hedge.json 才顯示） ----------
+// ---------- 大盤避險：試算表的加碼點與距離（G 分數、五策略請按按鈕到避險儀表板看） ----------
 async function hedgeInfo(items, index) {
   const x = items.find(i => i.code === 'TAIEX');
   const idx = index?.price ?? index?.prev;
@@ -144,9 +144,7 @@ async function hedgeInfo(items, index) {
   const levels = [x.buy.b1, x.buy.b2, x.buy.sb].map((L, i) => L?.lo ? { raw: L.raw, lo: L.lo, alloc: alloc[i] } : null).filter(Boolean)
     .sort((a, b) => a.lo - b.lo)
     .map(l => ({ ...l, dist: `${l.lo / idx - 1 > 0 ? '+' : ''}${((l.lo / idx - 1) * 100).toFixed(1)}%` }));
-  let h = {};
-  try { const r = await fetch('https://raw.githubusercontent.com/cyw714/stock-dashboard/main/hedge.json'); if (r.ok) h = await r.json(); } catch { /* 還沒接上 */ }
-  return { index: idx, levels, g: typeof h.g === 'number' ? h.g : null, signals: Array.isArray(h.signals) ? h.signals : null };
+  return { index: idx, levels, g: null, signals: null };  // G 分數、五策略請到避險儀表板看
 }
 
 // ---------- 盤前晨報 ----------
