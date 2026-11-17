@@ -12,7 +12,7 @@ name: 部署 stockie
 on:
   push:
     branches: [v2, main]
-    paths: ['bot/**', '.github/workflows/bot-deploy.yml']
+    paths: ['bot/**', 'index.html', '.github/workflows/bot-deploy.yml']
   workflow_dispatch:
 
 concurrency: bot-deploy
@@ -50,6 +50,7 @@ jobs:
       - name: 打包並上傳容器
         run: |
           gcloud auth configure-docker $REGION-docker.pkg.dev --quiet
+          cp index.html bot/site/index.html   # 新版網站預覽一起放進去
           docker build -t "$IMAGE" bot
           docker push "$IMAGE"
 

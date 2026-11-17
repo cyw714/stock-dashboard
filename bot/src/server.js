@@ -5,9 +5,11 @@
 //   POST /cron/watchdog                                        看門狗（要帶 CRON_SECRET）
 //   POST /line/webhook                                         LINE 選單按鈕（用 Channel secret 驗證）
 //   GET  /api/watchlist                                        給網站讀的即時清單＋價格
+//   GET  /preview                                              新版網站預覽
 //   GET  /healthz                                              健康檢查
 
 import { createServer } from 'node:http';
+import { readFile } from 'node:fs/promises';
 import { timingSafeEqual } from 'node:crypto';
 import * as jobs from './jobs.js';
 import { verifySignature } from './line.js';
@@ -39,6 +41,14 @@ const server = createServer(async (req, res) => {
   const path = url.pathname;
   try {
     if (path === '/healthz') return json(res, 200, { ok: true });
+
+    // 新版網站的預覽（正式上線前先在這裡看；上線後網站一樣放在 GitHub Pages）
+    if (path === '/preview' || path === '/preview/') {
+      const html = await readFile(new URL('../site/index.html', import.meta.url)).catch(() => null);
+      if (!html) return json(res, 404, { error: '預覽網頁還沒放進來' });
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
+      return res.end(html);
+    }
 
     if (path.startsWith('/cron/') && req.method === 'POST') {
       if (!cronAuthorized(req)) return json(res, 403, { error: 'forbidden' });
