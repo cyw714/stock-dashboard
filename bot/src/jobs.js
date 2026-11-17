@@ -340,6 +340,10 @@ async function textCommand(ev) {
   const msg = ev.message.text.trim(), uid = ev.source?.userId;
   let m;
   if ((m = msg.match(/^提醒\s*(\S+)\s+([\d.,]+)$/))) return M.textMessage(await F.addCustom(uid, await watchlist(), m[1], m[2]));
+  if ((m = msg.match(/^提醒\s*(\S+)$/))) {
+    const hit = F.findItem(await watchlist(), m[1]);
+    return M.textMessage(`要設定在什麼價格呢？請加上價格，例如：\n提醒 ${hit?.code ?? m[1]} ${hit?.buy?.b1?.raw?.replace(/[^\d.]/g, '') || '100'}\n\n（股票代號和價格中間要空一格）`);
+  }
   if ((m = msg.match(/^取消提醒\s*(\S+)$/))) return M.textMessage(await F.cancelCustom(uid, await watchlist(), m[1]));
   if (/^(我的提醒|提醒清單|提醒列表)$/.test(msg)) return M.textMessage(await F.listCustom(uid));
   if (/^(說明|help|指令|\?)$/i.test(msg)) return M.textMessage(HELP);
@@ -352,7 +356,7 @@ async function textCommand(ev) {
     const rows = hit ? annotate([hit], (await quotesFor([hit])).prices) : [];
     return F.lookup(rows, msg);
   }
-  return null;
+  return M.textMessage(`看不懂「${msg.slice(0, 20)}」😅\n\n${HELP}`);
 }
 
 export async function handleEvent(ev) {
