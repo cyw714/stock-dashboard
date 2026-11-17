@@ -98,6 +98,8 @@ aside.drawer.open{transform:none}
 .tabs button{border:0;background:none;cursor:pointer;padding:10px;min-height:44px;margin-bottom:-1px;color:var(--muted);border-bottom:2px solid transparent}
 .tabs button[aria-selected=true]{color:var(--ink);font-weight:700;border-bottom-color:var(--ink)}
 .d-body{flex:1;overflow-y:auto;padding:20px 28px 32px;display:flex;flex-direction:column;gap:18px}
+.d-body>*,.card>*{flex-shrink:0}   /* 內容很多時不要被壓扁（價格尺會跟文字疊在一起） */
+.d-body .ladder{margin:6px 4px 4px}
 .sec h3{margin:0 0 8px;font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:700;display:flex;justify-content:space-between;align-items:center}
 .tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .tile{text-align:left;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
