@@ -201,14 +201,16 @@ async function getJSON(url) { const r = await fetch(url, { cache: 'no-store' });
 // ===== 讀資料 =====
 async function load(first) {
   const tasks = [getJSON(API)];
-  if (first) tasks.push(...['info.json', 'pe.json', 'model.json', 'profiles.json'].map(f => getJSON(BASE + f).catch(() => ({}))));
-  const [api, info, pe, model, prof] = await Promise.all(tasks);
+  if (first) tasks.push(...['info.json', 'pe.json', 'model.json', 'profiles.json', 'annotations.json'].map(f => getJSON(BASE + f).catch(() => ({}))));
+  const [api, info, pe, model, prof, ann] = await Promise.all(tasks);
   D.items = api.items.filter(x => x.code !== 'TAIEX' || x.price != null);
   D.market = api.market || {};
   D.updated = api.updated;
-  if (first) { D.info = info; D.pe = pe.data || {}; D.model = model.stocks || {}; D.prof = prof.stocks || {}; }
+  if (first) { D.info = info; D.pe = pe.data || {}; D.model = model.stocks || {}; D.prof = prof.stocks || {}; D.ann = ann.stocks || {}; }
   // 即時價抓不到時，先用最近一次收盤價（模型資料裡的）頂著，機率也照樣算得出來
   for (const x of D.items) {
+    const an = (D.ann || {})[x.code];
+    if (an && (!x.note || /見.?圖/.test(x.note))) x.note = an.text;   // 「見右圖」換成圖上的價位
     const md = D.model[x.code];
     if (x.price == null && md) { x.price = md.close; x.pct = null; x.fromClose = md.asof; }
   }

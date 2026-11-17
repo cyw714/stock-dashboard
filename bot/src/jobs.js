@@ -29,7 +29,14 @@ const BUY = ['b1', 'b2', 'sb'], TP = ['tp1', 'tp2', 'tp3'];
 let wlCache = { at: 0, items: null };
 export async function watchlist() {
   if (wlCache.items && Date.now() - wlCache.at < 60_000) return wlCache.items;  // 1 分鐘內重複使用，避免一直下載
-  wlCache = { at: Date.now(), items: await loadWatchlist() };
+  const items = await loadWatchlist();
+  // 試算表圖片上的價位（annotations.json）：把「見右圖」換成文字
+  try {
+    const r = await fetch('https://raw.githubusercontent.com/cyw714/stock-dashboard/main/annotations.json');
+    const ann = r.ok ? (await r.json()).stocks ?? {} : {};
+    for (const x of items) if (ann[x.code] && (!x.note || /見.?圖/.test(x.note))) x.note = ann[x.code].text;
+  } catch { /* 沒有也沒關係 */ }
+  wlCache = { at: Date.now(), items };
   return wlCache.items;
 }
 
