@@ -4,6 +4,7 @@ name: 更新模型評分
 on:
   schedule:
     - cron: "40 6 * * 1-5"    # 台灣時間週一到週五 14:40（收盤資料出來之後）
+    - cron: "20 23 * * 0-4"   # 台灣時間週一到週五 07:20 再確認一次（萬一前一天下午沒跑成功）
   push:
     branches: [v2]
     paths: ['scripts/update_model.py', '.github/workflows/model.yml']

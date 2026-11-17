@@ -45,20 +45,33 @@ export async function twQuotes(codes) {
   const out = { index: null, stocks: {}, tradeDate: null };
   for (let i = 0; i < chans.length; i += 40) {
     const url = `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?json=1&delay=0&_=${Date.now()}&ex_ch=${chans.slice(i, i + 40).join('|')}`;
-    try {
-      const data = await getJSON(url, { headers: { Referer: 'https://mis.twse.com.tw/stock/index.jsp', ...(cookie ? { Cookie: cookie } : {}) } });
-      for (const m of data.msgArray ?? []) {
-        // z 是最新成交價；剛好沒有成交時用最佳買價代替；都沒有就用開盤價
-        const price = num(m.z) ?? num((m.b ?? '').split('_')[0]) ?? num(m.o);
-        const prev = num(m.y);
-        const q = { price, prev, name: m.n, pct: price && prev ? price / prev - 1 : null };
-        if (m.c === 't00') { out.index = q; out.tradeDate = m.d ?? null; }
-        else if (codes.includes(m.c)) out.stocks[m.c] = q;
+    // 每一批最多試 3 次：證交所偶爾會擋太頻繁的請求
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const data = await getJSON(url, { headers: { Referer: 'https://mis.twse.com.tw/stock/index.jsp', ...(cookie ? { Cookie: cookie } : {}) } });
+        if (!data.msgArray) throw new Error('沒有資料');
+        for (const m of data.msgArray) {
+          // z 是最新成交價；剛好沒有成交時用最佳買價代替；都沒有就用開盤價
+          const price = num(m.z) ?? num((m.b ?? '').split('_')[0]) ?? num(m.o);
+          const prev = num(m.y);
+          const q = { price, prev, name: m.n, pct: price && prev ? price / prev - 1 : null };
+          if (m.c === 't00') { out.index = q; out.tradeDate = m.d ?? null; }
+          else if (codes.includes(m.c)) out.stocks[m.c] = q;
+        }
+        break;
+      } catch (e) {
+        console.warn(`證交所行情第 ${attempt} 次失敗：`, e.message);
+        await new Promise(r => setTimeout(r, 800 * attempt));
       }
-    } catch (e) {
-      console.warn('證交所行情失敗：', e.message);
     }
     if (i + 40 < chans.length) await new Promise(r => setTimeout(r, 600));
+  }
+  // 證交所還是缺的（例如被擋、興櫃股票），改問 Yahoo：先試上市 .TW，再試上櫃 .TWO
+  const missing = codes.filter(c => !out.stocks[c] || out.stocks[c].price == null && out.stocks[c].prev == null);
+  if (missing.length) {
+    const tryY = async c => (await yahooQuote(`${c}.TW`)) ?? (await yahooQuote(`${c}.TWO`));
+    const got = await Promise.all(missing.map(tryY));
+    missing.forEach((c, k) => { if (got[k]?.price) out.stocks[c] = { ...got[k], name: out.stocks[c]?.name ?? null, source: 'yahoo' }; });
   }
   return out;
 }

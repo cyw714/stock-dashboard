@@ -17,6 +17,7 @@ import { quotesFor, yahooQuotes, txfQuote } from './quotes.js';
 
 const PORT = process.env.PORT || 8080;
 let apiCache = { at: 0, data: null };
+const lastGood = {};
 
 const readBody = req => new Promise((resolve, reject) => {
   const chunks = [];
@@ -74,6 +75,11 @@ const server = createServer(async (req, res) => {
       if (apiCache.data && Date.now() - apiCache.at < 30_000) return json(res, 200, apiCache.data, { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'public, max-age=30' });
       const items = await jobs.watchlist();
       const [{ prices }, intl, txf] = await Promise.all([quotesFor(items), yahooQuotes(['^IXIC', '^SOX']), txfQuote()]);
+      // 這次沒抓到的，先用上一次抓到的價格頂著（標記 stale），網頁就不會出現空白
+      for (const x of items) {
+        if (prices[x.code]?.price != null) lastGood[x.code] = prices[x.code];
+        else if (lastGood[x.code]) prices[x.code] = { ...lastGood[x.code], stale: true };
+      }
       const market = { index: prices.TAIEX ?? null, txf, nasdaq: intl['^IXIC'], sox: intl['^SOX'] };
       apiCache = { at: Date.now(), data: { updated: new Date().toISOString(), market, items: jobs.annotate(items, prices) } };
       return json(res, 200, apiCache.data,
