@@ -65,6 +65,8 @@ assert.deepEqual(d.map(x => x.kind), ['add', 'remove', 'level', 'group', 'score'
 assert.ok(d[2].text.includes('買點1 1110 → 870'));
 msgs.push(M.morningMessage({ dateLabel: '11/17（二）', intl: [], counts: { sb: 1, b: 1, tp: 1 }, notes: [], alertTimes: ['10:30'], diffs: { since: '11/14', items: d } }));
 msgs.push(M.diffMessage({ since: '11/14', until: '11/17', items: d }));
+msgs.push(M.morningMessage({ dateLabel: '11/17（二）', intl: [], counts: { sb: 1, b: 1, tp: 1 }, notes: [], alertTimes: ['10:30'], hedge: { index: 41040, g: -2.4, signals: [1, 1, 1, 0, 0], levels: [{ raw: '43200', alloc: '50%', dist: '+5.3%' }] } }));
+msgs.push(M.morningMessage({ dateLabel: '11/17（二）', intl: [], counts: { sb: 1, b: 1, tp: 1 }, notes: [], alertTimes: ['10:30'], hedge: { index: 41040, g: null, signals: null, levels: [{ raw: '43200', alloc: '50%', dist: '+5.3%' }] } }));
 
 // 6. 查股、自訂提醒（用記憶體代替資料庫）
 assert.equal(F.findItem(rows, '欣興')?.code, '3037');
@@ -78,7 +80,7 @@ assert.match(await F.listCustom('U1'), /沒有設定提醒/);
 
 // 7. 每週回顧訊息
 msgs.push(M.weeklyMessage({ range: '11/10–11/16', groups: [{ title: '本週到價', rows: [{ date: '11/12', code: '3037', name: '欣興', zone: 'sb', ret: 0.03 }] }, { title: '上週', rows: [] }], summary: '買點到價後上漲的比例：1/1' }));
-for (const m of msgs.slice(-4)) {
+for (const m of msgs.slice(-6)) {
   assert.ok(m.altText.length <= 400);
   (function walk(o) { if (o && typeof o === 'object') { if (o.type === 'text') assert.ok(o.text.length > 0, '空白文字 LINE 會拒收'); Object.values(o).forEach(walk); } })(m.contents);
 }

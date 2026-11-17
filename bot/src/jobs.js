@@ -134,6 +134,20 @@ async function infoJson() {
   } catch { return {}; }
 }
 
+// ---------- 大盤避險：試算表的加碼點＋避險儀表板的 G 分數（有 hedge.json 才顯示） ----------
+async function hedgeInfo(items, index) {
+  const x = items.find(i => i.code === 'TAIEX');
+  const idx = index?.price ?? index?.prev;
+  if (!x || !idx) return null;
+  const alloc = String(x.note ?? '').split(/[,，、]/).map(s => s.trim()).filter(Boolean);
+  const levels = [x.buy.b1, x.buy.b2, x.buy.sb].map((L, i) => L?.lo ? { raw: L.raw, lo: L.lo, alloc: alloc[i] } : null).filter(Boolean)
+    .sort((a, b) => a.lo - b.lo)
+    .map(l => ({ ...l, dist: `${l.lo / idx - 1 > 0 ? '+' : ''}${((l.lo / idx - 1) * 100).toFixed(1)}%` }));
+  let h = {};
+  try { const r = await fetch('https://raw.githubusercontent.com/cyw714/stock-dashboard/main/hedge.json'); if (r.ok) h = await r.json(); } catch { /* 還沒接上 */ }
+  return { index: idx, levels, g: typeof h.g === 'number' ? h.g : null, signals: Array.isArray(h.signals) ? h.signals : null };
+}
+
 // ---------- 盤前晨報 ----------
 export async function buildMorning({ save = false } = {}) {
   const items = await watchlist();
@@ -154,6 +168,7 @@ export async function buildMorning({ save = false } = {}) {
   const diffs = await F.sheetDiff(items, names, { save }).catch(e => { console.warn('試算表異動比對失敗：', e.message); return null; });
   return M.morningMessage({
     diffs,
+    hedge: await hedgeInfo(items, t.index),
     dateLabel: tpeLabel(),
     intl: [
       { label: '那斯達克', ...intl['^IXIC'] },

@@ -73,6 +73,15 @@ select{border:1px solid var(--line);background:var(--surface);border-radius:8px;
 .c-foot{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
 .c-foot b{font:600 16px var(--mono);color:var(--down)}
 .c-foot .gain{margin-left:auto;font:600 15px var(--mono);color:var(--up)}
+.card.hedge{grid-column:1/-1}
+.hd-tiles{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px}
+.hd-tile{background:var(--surface2);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-height:96px}
+.hd-link{background:var(--accent-soft);border:1px solid #6E7480;text-decoration:none;justify-content:space-between}
+.hd-link:hover{border-color:var(--accent)}
+.hd-gauge{position:relative;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--up),var(--line) 50%,var(--down));margin-top:6px}
+.hd-gauge span{position:absolute;top:-4px;width:4px;height:16px;margin-left:-2px;background:var(--ink);border-radius:2px}
+.hd-dot{width:18px;height:18px;border-radius:9px;display:inline-block}
+@media (max-width:720px){.hd-tiles{grid-template-columns:1fr}}
 .note{font-size:12px;color:var(--warn-ink);background:var(--warn-bg);border-radius:6px;padding:3px 8px}
 footer{margin-top:28px;color:var(--muted);font-size:12px;line-height:1.7}
 .empty{padding:40px;text-align:center;color:var(--muted)}
@@ -190,12 +199,12 @@ async function getJSON(url) { const r = await fetch(url, { cache: 'no-store' });
 // ===== 讀資料 =====
 async function load(first) {
   const tasks = [getJSON(API)];
-  if (first) tasks.push(...['info.json', 'pe.json', 'model.json', 'profiles.json'].map(f => getJSON(BASE + f).catch(() => ({}))));
-  const [api, info, pe, model, prof] = await Promise.all(tasks);
+  if (first) tasks.push(...['info.json', 'pe.json', 'model.json', 'profiles.json', 'hedge.json'].map(f => getJSON(BASE + f).catch(() => ({}))));
+  const [api, info, pe, model, prof, hedge] = await Promise.all(tasks);
   D.items = api.items.filter(x => x.code !== 'TAIEX' || x.price != null);
   D.market = api.market || {};
   D.updated = api.updated;
-  if (first) { D.info = info; D.pe = pe.data || {}; D.model = model.stocks || {}; D.prof = prof.stocks || {}; }
+  if (first) { D.info = info; D.pe = pe.data || {}; D.model = model.stocks || {}; D.prof = prof.stocks || {}; D.hedge = hedge || {}; }
   // 即時價抓不到時，先用最近一次收盤價（模型資料裡的）頂著，機率也照樣算得出來
   for (const x of D.items) {
     const md = D.model[x.code];
@@ -222,7 +231,8 @@ function render() {
   segs();
   const list = filtered();
   $('#count').textContent = `顯示 ${list.length} 檔`;
-  $('#grid').innerHTML = list.length ? list.map(card).join('') : '<div class="empty">沒有符合條件的標的</div>';
+  const ordered = [...list.filter(x => x.code === 'TAIEX'), ...list.filter(x => x.code !== 'TAIEX')];
+  $('#grid').innerHTML = ordered.length ? ordered.map(card).join('') : '<div class="empty">沒有符合條件的標的</div>';
   if (S.open) drawer(S.open, false);
 }
 
@@ -271,15 +281,26 @@ function probOf(x, L, T) {
 const HEDGE_URL = 'https://hdg-80yyy10t.pages.dev/';
 function hedgeCard(x) {
   const alloc = String(x.note || '').split(/[,，、]/).map(s => s.trim()).filter(Boolean);
-  const lv = [x.buy.b1, x.buy.b2, x.buy.sb].map((L, i) => L ? { L, a: alloc[i] } : null).filter(Boolean);
-  return `<a class="card focus" href="${HEDGE_URL}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">
-    <div class="c-head"><span class="code">TAIEX</span><span class="pill">指數</span><span class="pill focus">大盤避險</span></div>
-    <div class="c-name"><b>加權指數</b><span class="px">${x.price ? x.price.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '—'} <span class="${cls(x.pct)}" style="font-size:12px">${fpc(x.pct)}</span></span></div>
-    <div class="c-tag">避險加碼點與配置比例</div>
-    <table class="t" style="font-size:13px"><tr><th>加碼點</th><th class="r">配置</th><th class="r">距現在</th></tr>
-      ${lv.map(({ L, a }) => `<tr><td class="mono">${esc(L.raw)}</td><td class="r">${esc(a || '—')}</td><td class="r">${x.price ? `${((L.lo / x.price - 1) * 100) > 0 ? '+' : ''}${((L.lo / x.price - 1) * 100).toFixed(1)}%` : '—'}</td></tr>`).join('')}</table>
-    <div class="c-foot"><span>開啟避險儀表板 →</span></div>
-  </a>`;
+  const lv = [x.buy.b1, x.buy.b2, x.buy.sb].map((L, i) => L ? { L, a: alloc[i] } : null).filter(Boolean)
+    .sort((a, b) => a.L.lo - b.L.lo);
+  const h = D.hedge || {};
+  const gPos = h.g != null ? Math.max(0, Math.min(100, (h.g + 5) * 10)) : null;
+  const gTile = h.g != null
+    ? `<div class="hd-tile" style="background:var(--up-soft)"><span style="font-size:12px;color:var(--up)">大盤多空分數 G</span><span class="mono" style="font-size:26px;font-weight:600;color:${h.g < 0 ? 'var(--up)' : 'var(--down)'}">${h.g > 0 ? '+' : ''}${h.g.toFixed(1)}</span>
+       <div class="hd-gauge"><span style="left:${gPos}%"></span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>偏空 −5</span><span>+5 偏多</span></div></div>`
+    : `<div class="hd-tile"><span class="muted" style="font-size:12px">大盤多空分數 G</span><span class="muted" style="font-size:13px;margin-top:8px">接上避險儀表板後顯示</span></div>`;
+  const sig = Array.isArray(h.signals) ? h.signals : null;
+  const sTile = sig
+    ? `<div class="hd-tile"><span class="muted" style="font-size:12px">五策略避險訊號</span><div style="display:flex;gap:6px;margin:8px 0 6px">${sig.map(on => `<span class="hd-dot" style="background:${on ? 'var(--up)' : 'var(--line)'}"></span>`).join('')}</div><b style="font-size:14px">${sig.filter(Boolean).length}／${sig.length} 建議持有空單</b></div>`
+    : `<div class="hd-tile"><span class="muted" style="font-size:12px">五策略避險訊號</span><span class="muted" style="font-size:13px;margin-top:8px">接上避險儀表板後顯示</span></div>`;
+  return `<section class="card focus hedge" aria-label="大盤避險" style="cursor:default">
+    <div class="c-head"><span class="code">TAIEX</span><span class="pill focus">大盤避險</span>${h.updated ? `<span class="muted" style="margin-left:auto;font-size:12px">避險儀表板 ${esc(h.updated)} 更新</span>` : ''}</div>
+    <div class="c-name"><b>加權指數</b><span class="px" style="font-size:18px">${x.price ? x.price.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '—'} <span class="${cls(x.pct)}" style="font-size:13px">${fpc(x.pct)}</span></span></div>
+    <div class="hd-tiles">${gTile}${sTile}
+      <a class="hd-tile hd-link" href="${HEDGE_URL}" target="_blank" rel="noopener"><span style="font-size:12px;color:var(--accent)">建議避險部位</span><b style="font-size:16px;color:var(--accent)">開啟避險儀表板 →</b><span class="muted" style="font-size:12px">部位試算在避險儀表板</span></a></div>
+    <table class="t"><tr><th>避險加碼點</th><th class="r">配置</th><th class="r">距現在</th></tr>
+      ${lv.map(({ L, a }) => `<tr><td class="mono">${esc(L.raw)}</td><td class="r">${esc(a || '—')}</td><td class="r">${x.price ? `${(L.lo / x.price - 1) > 0 ? '+' : ''}${((L.lo / x.price - 1) * 100).toFixed(1)}%` : '—'}</td></tr>`).join('')}</table>
+  </section>`;
 }
 
 function card(x) {

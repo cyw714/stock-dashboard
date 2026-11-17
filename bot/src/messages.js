@@ -2,6 +2,7 @@
 // 這裡只負責「長什麼樣子」，資料怎麼來在 jobs.js。
 
 export const DASHBOARD_URL = 'https://cyw714.github.io/stock-dashboard/';
+export const HEDGE_URL = 'https://hdg-80yyy10t.pages.dev/';
 
 // A 版：全炭灰，和儀表板炭灰版同一套顏色（紅漲綠跌）
 const C = {
@@ -66,7 +67,7 @@ function stockRow(s, extra) {
 }
 
 // ---------- 盤前晨報 ----------
-export function morningMessage({ dateLabel, intl, counts, notes, alertTimes, diffs = null }) {
+export function morningMessage({ dateLabel, intl, counts, notes, alertTimes, diffs = null, hedge = null }) {
   const body = [
     label('國際盤'),
     ...intl.map(r => box('baseline', [
@@ -83,6 +84,26 @@ export function morningMessage({ dateLabel, intl, counts, notes, alertTimes, dif
       text(t, { size: 'xxs', color: ZONE[z].fg, align: 'center' }),
     ], { backgroundColor: ZONE[z].bg, cornerRadius: '8px', paddingAll: '6px' })), { spacing: 'sm' }),
   ];
+  if (hedge?.levels.length) {
+    body.push(sep(), label(`大盤避險（加權 ${fmtPrice(hedge.index)}）`));
+    if (hedge.g != null || hedge.signals) {
+      body.push(box('horizontal', [
+        ...(hedge.g != null ? [box('vertical', [
+          text('多空分數 G', { size: 'xxs', color: hedge.g < 0 ? C.up : C.down }),
+          text(`${hedge.g > 0 ? '+' : ''}${hedge.g.toFixed(1)} ${hedge.g < 0 ? '偏空' : '偏多'}`, { size: 'md', weight: 'bold', color: hedge.g < 0 ? C.up : C.down }),
+        ], { backgroundColor: hedge.g < 0 ? '#4A3A3C' : '#354740', cornerRadius: '8px', paddingAll: '7px' })] : []),
+        ...(hedge.signals ? [box('vertical', [
+          text('五策略訊號', { size: 'xxs', color: C.muted }),
+          text(`${hedge.signals.filter(Boolean).length}／${hedge.signals.length} 建議持有空單`, { size: 'xs', weight: 'bold' }),
+        ], { backgroundColor: C.soft, cornerRadius: '8px', paddingAll: '7px' })] : []),
+      ], { spacing: 'sm' }));
+    }
+    body.push(...hedge.levels.map(l => box('baseline', [
+      text(l.raw, { size: 'xs', flex: 4 }),
+      text(l.alloc ?? '', { size: 'xs', color: C.muted, flex: 2, align: 'end' }),
+      text(l.dist, { size: 'xs', weight: 'bold', flex: 2, align: 'end' }),
+    ])));
+  }
   if (notes.length) body.push(sep(), label('今天注意'), ...notes.slice(0, 5).map(n => text(`• ${n}`, { size: 'xs' })));
   if (diffs?.items.length) {
     body.push(sep(), label(`試算表異動（${diffs.since} → 今天）`), ...diffs.items.slice(0, 5).map(diffRow));
@@ -91,7 +112,8 @@ export function morningMessage({ dateLabel, intl, counts, notes, alertTimes, dif
   body.push(note(`今天到價整理：${alertTimes.join(' · ')}`));
   return flex(`盤前晨報 ${dateLabel}`, bubble('盤前晨報', `${dateLabel} 08:00`, body, [
     { label: '到價列表', data: 'action=list' },
-    ...(diffs?.items.length ? [{ label: '試算表異動', data: 'action=diff' }] : [{ label: '開儀表板', uri: DASHBOARD_URL }]),
+    ...(diffs?.items.length ? [{ label: '試算表異動', data: 'action=diff' }] : []),
+    { label: '避險儀表板', uri: HEDGE_URL },
   ]));
 }
 
